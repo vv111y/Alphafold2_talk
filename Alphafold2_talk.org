@@ -1,0 +1,103 @@
+* HEADER :ignore:noexport:
+#+TITLE: Highly accurate protein structure prediction with AlphaFold
+#+SUBTITLE: AISC Healthcare Discussion Group 
+#+EMAIL: willy.rempel@rempellabs.com  
+#+AUTHOR: Willy Rempel
+#+LATEX_HEADER: \author{Willy Rempel}
+#+DATE: Saturday, July 24, 2021 
+#+DESCRIPTION: 
+#+KEYWORDS: 
+#+LANGUAGE:  en
+#+PROPERTY: header-args :tangle yes :comments link :results link
+#+OPTIONS: H:3 toc:nil author:nil todo:nil p:nil stat:nil d:nil num:nil
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:https://orgmode.org/org-info.js
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+
+#+STARTUP: beamer
+#+LATEX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [presentation, smaller]
+#+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col) %8BEAMER_OPT(Opt)
+#+BEAMER_FRAME_LEVEL: 3
+#+BEAMER_THEME: Rochester 
+#+BEAMER_COLOR_THEME: cormorant
+#+BEAMER_HEADER: \graphicspath{{./imgs/}}
+#+LATEX_HEADER: \beamertemplatenavigationsymbolsempty
+#+LATEX_HEADER: \setbeamertemplate{headline}{}
+
+#+LATEX_HEADER: \usepackage{amsmath, amsthm, amssymb}
+#+LATEX_HEADER: \usepackage{verbatim, appendix}
+#+LATEX_HEADER: \usepackage{ulem}
+#+LATEX_HEADER: \usepackage{graphicx}
+#+LATEX_HEADER: \usepackage{caption}
+# #+LATEX_HEADER: \usepackage{titletoc}
+#+LATEX_HEADER: \usepackage{pseudocode}
+#+LaTeX_HEADER: \usepackage[ruled]{algorithm2e}
+#+LaTeX_HEADER: \usepackage{array}
+# #+LaTeX_HEADER: \usepackage[svgnames, table]{xcolor}
+# #+LaTeX_HEADER: \usepackage[most]{tcolorbox}
+#+LaTeX_HEADER: \usepackage{booktabs}
+#+LaTeX_HEADER: \usepackage{listings}
+
+#+LaTeX_HEADER: \usepackage[]{biblatex} 
+#+LaTeX_HEADER: \setbeamertemplate{bibliography item}{\insertbiblabel}
+#+LaTeX_HEADER: \AtEveryBibitem{\clearfield{note}}
+
+#+LaTeX_HEADER: \bibliography{/home/will/Documents/2Research/1RefsMeta/Zotero.bib} 
+#+LATEX: \maketitle
+# bibliography:/home/will/Documents/2Research/1RefsMeta/Zotero.bib
+/home/will/Documents/2Research/1RefsMeta/Zotero.bib
+\setbeamerfont{large}{size=\large}
+
+
+* START [0/0] :ignore:noexport:
+** LOG
+** ---
+* refs :ignore:noexport:
+* snips :ignore:noexport:
+
+- [[https://rempellabs.com][rempellabs.com]] [coming soon] \\
+* CODE [0/0] :ignore:noexport:
+# * Writeup [0/0] :export:ignore:
+* --- :ignore:noexport:
+* Results :ignore:noexport:
+* Methods :ignore:noexport:
+* Supplemental figures :ignore:noexport:
+* --- :ignore:noexport:
+* Introduction 
+*** Introduction
+**** :B_ignoreheading:BMCOL:
+:PROPERTIES:
+:BEAMER_COL: 0.4
+:END:
+#+ATTR_LATEX: :scale 0.3
+[[./imgs/profilepic2.jpg]]
+**** :BMCOL:
+:PROPERTIES:
+:BEAMER_COL: 0.6
+:END:
+Willy Rempel
+- HBSc Computer Science \\
+- BSc Mathematics \\ 
+- Research Associate, AISC \\
+- seeking opportunities in the field 
+*** Authors 
+*** Context: Stages of gene expression
+#+ATTR_LATEX: :scale 0.4
+[[./imgs/gene-reg.png]]
+cite:RegulationGeneExpression2021
+* Methods	
+** Model architecture	
+** Model training and evaluation	
+* Results 
+*** Results
+*** Results II
+*** Results: Positional Encodings 
+*** Ablation Study
+*** 
+  :PROPERTIES:
+  :BEAMER_OPT: fragile,allowframebreaks,label=
+  :END:      
+  
+\printbibliography
