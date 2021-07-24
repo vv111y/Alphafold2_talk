@@ -45,11 +45,11 @@
 #+LaTeX_HEADER: \usepackage[]{biblatex} 
 #+LaTeX_HEADER: \setbeamertemplate{bibliography item}{\insertbiblabel}
 #+LaTeX_HEADER: \AtEveryBibitem{\clearfield{note}}
+#+LaTeX_HEADER: \bibliography{AlphafoldTalk2021.bib} 
+# bibliography:AlphafoldTalk2021.bib
 
-#+LaTeX_HEADER: \bibliography{./AlphafoldTalk2021.bib} 
 #+LATEX: \maketitle
-# bibliography:./AlphafoldTalk2021.bib
-./AlphafoldTalk2021.bib
+
 \setbeamerfont{large}{size=\large}
 
 
@@ -66,7 +66,29 @@
 * Results :ignore:noexport:
 * Methods :ignore:noexport:
 * Supplemental figures :ignore:noexport:
+* Methods :ARCHIVE:noexport:
+** Model training and evaluation	
 * --- :ignore:noexport:
+* train todo
+
+Predictions of side chain chi angles as well as the final, per-residue accuracy of the structure (pLDDT) are computed with small per-residue networks on the final activations at the end of the network.
+The estimate of the TM-score (pTM) is obtained from a pairwise error prediction that is computed as a linear projection from the final pair representation.
+The final loss (that we term the frame-aligned point error (FAPE) (Fig. 3f)) compares the predicted atom positions to the true positions under many different alignments.
+For each alignment, defined by aligning the predicted frame (Rk,tk) to the corresponding true frame, we compute the distance of all predicted atom positions xi from the true atom positions.
+The resulting Nframes × Natoms distances are penalized with a clamped L1-loss.
+This creates a strong bias for atoms to be correct relative to the local frame of each residue and hence correct with respect to its side chain interactions, as well as providing the main source of chirality for AlphaFold (Suppl. Methods 1.9.3 and Suppl. Fig. 9).
+
+makes effective use of the unlabelled sequence data and significantly
+improves the accuracy of the resulting network.
+Additionally, we randomly mask out or mutate individual residues
+within the MSA and have a Bidirectional Encoder Representations from
+Transformers (BERT)-style37 objective to predict the masked elements
+of the MSA sequences. This objective encourages the network to learn
+to interpret phylogenetic and covariation relationships without hardcoding a particular correlation statistic into the features. The BERT
+objective is trained jointly with the normal PDB structure loss on the
+same training examples and is not pre-trained, in contrast to recent
+independent work38.
+* ---
 * Introduction 
 *** Introduction
 **** :B_ignoreheading:BMCOL:
@@ -94,7 +116,7 @@ cite:rubieraAlphaFoldHereWhat
   This, and many other tricks, are described in exhaustive detail in the Supplementary Information. A reduced subset has been analysed in a brief ablation study, but ultimately, how important are each of the minor details is anybody’s guess.
   #+end_quote
 cite:rubieraAlphaFoldHereWhat
-
+(above blog post is recommended reading)
 *** Model Overview
 :PROPERTIES:
 :ID:       bef85d4f-05c7-425e-815f-b0698c0ff51a
@@ -104,9 +126,11 @@ cite:rubieraAlphaFoldHereWhat
 cite:jumperHighlyAccurateProtein2021
 * Data Pipeline
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: height=0.8*\textheight
+#+ATTR_LATEX: height=.2\textheight
 [[./imgs/mmcif-eg.png]]
 cite:jumperHighlyAccurateProtein2021
+
+Also see cite:PDB101LearnGuide 
 
 *** Initial Input: mmCIF or FASTA files
 #+ATTR_LATEX: height=0.9*\textheight
@@ -115,26 +139,87 @@ cite:jumperHighlyAccurateProtein2021
 
 *** Parsing
 
+- only certain metadata (more from mmCIF)
+- change MSE residues into MET
 cite:jumperHighlyAccurateProtein2021
 *** Genetic Search
+For MSAs
+- JackHMMER
+  - MGnify: MSA depth 5,000
+  - UniRef90: MSA depth 10,000
+- HHBlits
+  - Uniclust30 + BFD: MSA depth unlimited
+- MSAs duplicated and stacked
+
+flags:
+  JackHMMER: -N 1 -E 0.0001 --incE 0.0001 --F1 0.0005 --F2 0.00005 --F3 0.0000005.
+  HHBlits: -n 3 -e 0.001 -realign_max 100000 -maxfilt 100000 -min_prefilter_hits 1000 -maxseq 1000000.
 cite:jumperHighlyAccurateProtein2021
 *** Template Search
+- UniRef90 MSA from prior search used for PDB70 search using HHSearch.
+- Filter out:
+  - released after the input sequence
+  - or identical to the input sequence
+  - too small
+- At inference use top 4 templates
 cite:jumperHighlyAccurateProtein2021
 *** Training Data
+- 75:25 self-distillation : known structure (PDB)
+- stochastic filters (next)
 cite:jumperHighlyAccurateProtein2021
 *** Filtering
+- stochastic filters: 
+  * Input mmCIFs are restricted to have resolution less than 9 Å. This is not a very restrictive filter and only removes around 0.2% of structures.
+  * Longer protein chains are selected with higher probability.
+  * Also favour protein chains from smaller clusters. They use 40% sequence identity clusters of the Protein Data Bank clustered with MMSeqs2.
+  * Sequences are filtered out when any single amino acid accounts for more than 80% of the input primary sequence. This filter removes about 0.8% of sequences.
 cite:jumperHighlyAccurateProtein2021
 *** MSA block deletion
+- MSAs grouped by tool, sorted by block output? (e-value?)
+  - similar sequences are likely to be adjacent
+  - block deletion tends to remove similarities (ie. whole branch phylogeny)
 cite:jumperHighlyAccurateProtein2021
 *** MSA clustering
+- Similarity clusters used to randomly select subset of MSA sequences 
+  - to reduce computational cost from attention modules, reduce $N_seq$
+
+1. K-means, input sequence used as first cluster center
+2. masking
+3. hamming distance measure for remaining selections
 cite:jumperHighlyAccurateProtein2021
 *** Residue cropping
+During training:
+1. unclamped & clamped - sampling start index from uniform distributions
+2. Cropped with fixed size $N_res$
 cite:jumperHighlyAccurateProtein2021
 *** Featurization and model inputs
+- *target_feat*
+  This is a feature of size [Nres, 21] consisting of the “aatype” feature.
+- *residue_index*
+  This is a feature of size [Nres] consisting of the “residue_index” feature.
+- *msa_feat*
+  This is a feature of size [Nclust, Nres, 49] constructed by concatenating “cluster_msa”, “cluster_has_deletion”, “cluster_deletion_value”, “cluster_deletion_mean”, “cluster_profile”. We draw Ncycle×Nensemble random samples from this feature to provide each recycling/ensembling iteration of the network with a different sample (see subsubsection 1.11.2).
+- *extra_msa_feat*
+  This is a feature of size [Nextra_seq, Nres, 25] constructed by concatenating “extra_msa”, “extra_msa_has_deletion”, “extra_msa_deletion_value”. Together with “msa_feat’ above we also draw Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2).
+- *template_pair_feat*
+  This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. The “template_aatype” feature is included via tiling and stack- ing (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. - template_angle_feat This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”.
 cite:jumperHighlyAccurateProtein2021
 
+*** Self-distillation dataset
+
+- Build dataset (on unlabeled sequences):
+  1. Make MSA for every cluster in Uniclust30
+  2. Remove sequences that appear in another sequences MSA
+  3. Keep sequences of 200 < length < 1024
+  4. Remove sequences where MSA < 200 alignments
+- For predicted structures:
+  - train 'undistlled' model on just PDB dataset
+  - use this model to predict above set
+  - for every residue pair, computer confidence metric using KL-divergence between distance distribution and a reference distribution
+  - reference distribution
+- self-distillation training took ~2 weeks
+cite:jumperHighlyAccurateProtein2021
 * Model Architecture	
-** wut
 *** Input embeddings
 #+ATTR_LATEX: height=\textheight
 [[./imgs/input_embeddings.png]]
@@ -144,7 +229,13 @@ cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/model-evoformer-main.png]] 
 cite:jumperHighlyAccurateProtein2021
-*** EvoFormer: Rowwise Gated Attention
+*** EvoFormer: Overview
+- cast as a graph inference problem
+- cross-optimization and information flow between MSA representation and pair-wise representation
+- layer normalization
+cite:jumperHighlyAccurateProtein2021
+
+*** EvoFormer: Row wise Gated Attention
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/rowwise-gated-attention.png]]
 cite:jumperHighlyAccurateProtein2021
@@ -179,19 +270,50 @@ cite:jumperHighlyAccurateProtein2021
 [[./imgs/model-structure.png]]
 cite:jumperHighlyAccurateProtein2021
 *** Structure Module: Overview
+- structure module rotation + translation transforms
+cite:jumperHighlyAccurateProtein2021
+
+*** Structure Module: IPA
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/ipa.png]]
 cite:jumperHighlyAccurateProtein2021
-* Methods :ARCHIVE:
-** Model training and evaluation	
+*** Auxillary Heads 
+*** Loss Functions
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/loss-eq.png]]
+cite:jumperHighlyAccurateProtein2021
+*** Loss Functions & Auxillary Heads
+1. Side chain and backbone torsion angle loss
+2. Frame aligned point error (FAPE)
+   * Configurations with FAPE(X,Y) = 0
+   * Metric properties of FAPE
+3. Chiral properties of AlphaFold and its loss
+4. Model confidence prediction (pLDDT)
+5. TM-score prediction
+6. Distogram prediction
+7. Masked MSA prediction
+8. "Experimentally resolved" prediction
+9. Structural violations
+cite:jumperHighlyAccurateProtein2021
+*** Loss Functions: FAPE
+cite:jumperHighlyAccurateProtein2021
+
+* AlphaFold Inference
+*** AlphaFold Inference
+
+For inference, AlphaFold receives input features derived from the amino-acid sequence, MSA, and templates (see subsubsection 1.2.9) and outputs features including atom coordinates, the distogram, and per-residue confidence scores. Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
+cite:jumperHighlyAccurateProtein2021
 * Results 
 *** Results
+They did well
 cite:jumperHighlyAccurateProtein2021
 *** Results
+They did well
 cite:jumperHighlyAccurateProtein2021
 *** Results: Positional Encodings 
 cite:jumperHighlyAccurateProtein2021
 *** Novel Folds
+They did well
 cite:jumperHighlyAccurateProtein2021
 *** Ablation Studies
 Baseline for all ablation models: Full model without noisy-student self-attention  
@@ -208,8 +330,10 @@ Ablations:
 10. No auxiliary masked MSA head
 cite:jumperHighlyAccurateProtein2021
 *** Network Probing
+todo
 cite:jumperHighlyAccurateProtein2021
 *** Attention Visualization
+todo
 cite:jumperHighlyAccurateProtein2021
 *** 
   :PROPERTIES:
