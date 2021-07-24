@@ -1,0 +1,6904 @@
+https://doi.org/10.1038/s41586-021-03819-2
+
+Supplementary information
+
+W
+Highly accurate protein structure prediction
+E
+I
+with AlphaFold
+V
+E
+R
+P
+E
+L
+C
+I
+T
+R
+A
+D
+E
+T
+A
+R
+E
+L
+E
+C
+C
+A
+In the format provided by the
+authors and unedited
+
+Supplementary Information for: Highly accurate
+protein structure prediction with AlphaFold
+John Jumper11*+ , Richard Evans1* , Alexander Pritzel1* , Tim Green1* , Michael
+Figurnov1* , Olaf Ronneberger1* , Kathryn Tunyasuvunakool1* , Russ Bates1* ,
+Augustin Žídek1* , Anna Potapenko1* , Alex Bridgland1* , Clemens Meyer1* , Simon
+A A Kohl1* , Andrew J Ballard1* , Andrew Cowie1* , Bernardino Romera-Paredes1* ,
+Stanislav Nikolov1* , Rishub Jain1* , Jonas Adler1 , Trevor Back1 , Stig Petersen1 ,
+David Reiman1 , Ellen Clancy1 , Michal Zielinski1 , Martin Steinegger2 , Michalina
+Pacholska1 , Tamas Berghammer1 , Sebastian Bodenstein1 , David Silver1 , Oriol
+Vinyals1 , Andrew W Senior1 , Koray Kavukcuoglu1 , Pushmeet Kohli1 , and Demis
+Hassabis1*+
+1
+
+2
+
+DeepMind, London, UK
+School of Biological Sciences and Artificial Intelligence Institute, Seoul National
+University, Seoul, South Korea
+*
+These authors contributed equally
++
+Corresponding authors: John Jumper, Demis Hassabis
+
+Contents
+1 Supplementary Methods
+1.1 Notation . . . . . . . . . . . . . . . . . . . . . . . . . .
+1.2 Data pipeline . . . . . . . . . . . . . . . . . . . . . . .
+1.2.1 Parsing . . . . . . . . . . . . . . . . . . . . . .
+1.2.2 Genetic search . . . . . . . . . . . . . . . . . .
+1.2.3 Template search . . . . . . . . . . . . . . . . .
+1.2.4 Training data . . . . . . . . . . . . . . . . . . .
+1.2.5 Filtering . . . . . . . . . . . . . . . . . . . . . .
+1.2.6 MSA block deletion . . . . . . . . . . . . . . .
+1.2.7 MSA clustering . . . . . . . . . . . . . . . . . .
+1.2.8 Residue cropping . . . . . . . . . . . . . . . . .
+1.2.9 Featurization and model inputs . . . . . . . . . .
+1.3 Self-distillation dataset . . . . . . . . . . . . . . . . . .
+1.4 AlphaFold Inference . . . . . . . . . . . . . . . . . . .
+1.5 Input embeddings . . . . . . . . . . . . . . . . . . . . .
+1.6 Evoformer blocks . . . . . . . . . . . . . . . . . . . . .
+1.6.1 MSA row-wise gated self-attention with pair bias
+
+1
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+4
+4
+5
+5
+5
+5
+6
+6
+6
+6
+7
+8
+9
+10
+13
+14
+14
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+1.7
+
+1.8
+
+1.9
+
+1.10
+1.11
+
+1.12
+
+1.13
+
+1.14
+1.15
+1.16
+1.17
+
+1.6.2 MSA column-wise gated self-attention . . . . . . . . .
+1.6.3 MSA transition . . . . . . . . . . . . . . . . . . . . . .
+1.6.4 Outer product mean . . . . . . . . . . . . . . . . . . . .
+1.6.5 Triangular multiplicative update . . . . . . . . . . . . .
+1.6.6 Triangular self-attention . . . . . . . . . . . . . . . . .
+1.6.7 Transition in the pair stack . . . . . . . . . . . . . . . .
+Additional inputs . . . . . . . . . . . . . . . . . . . . . . . . .
+1.7.1 Template stack . . . . . . . . . . . . . . . . . . . . . .
+1.7.2 Unclustered MSA stack . . . . . . . . . . . . . . . . .
+Structure module . . . . . . . . . . . . . . . . . . . . . . . . .
+1.8.1 Construction of frames from ground truth atom positions
+1.8.2 Invariant point attention (IPA) . . . . . . . . . . . . . .
+1.8.3 Backbone update . . . . . . . . . . . . . . . . . . . . .
+1.8.4 Compute all atom coordinates . . . . . . . . . . . . . .
+1.8.5 Rename symmetric ground truth atoms . . . . . . . . .
+1.8.6 Amber relaxation . . . . . . . . . . . . . . . . . . . . .
+Loss functions and auxiliary heads . . . . . . . . . . . . . . . .
+1.9.1 Side chain and backbone torsion angle loss . . . . . . .
+1.9.2 Frame aligned point error (FAPE) . . . . . . . . . . . .
+1.9.3 Chiral properties of AlphaFold and its loss . . . . . . .
+1.9.4 Configurations with FAPE(X,Y) = 0 . . . . . . . . . . .
+1.9.5 Metric properties of FAPE . . . . . . . . . . . . . . . .
+1.9.6 Model confidence prediction (pLDDT) . . . . . . . . .
+1.9.7 TM-score prediction . . . . . . . . . . . . . . . . . . .
+1.9.8 Distogram prediction . . . . . . . . . . . . . . . . . . .
+1.9.9 Masked MSA prediction . . . . . . . . . . . . . . . . .
+1.9.10 “Experimentally resolved” prediction . . . . . . . . . .
+1.9.11 Structural violations . . . . . . . . . . . . . . . . . . .
+Recycling iterations . . . . . . . . . . . . . . . . . . . . . . . .
+Training and inference details . . . . . . . . . . . . . . . . . . .
+1.11.1 Training stages . . . . . . . . . . . . . . . . . . . . . .
+1.11.2 MSA resampling and ensembling . . . . . . . . . . . .
+1.11.3 Optimization details . . . . . . . . . . . . . . . . . . .
+1.11.4 Parameters initialization . . . . . . . . . . . . . . . . .
+1.11.5 Loss clamping details . . . . . . . . . . . . . . . . . . .
+1.11.6 Dropout details . . . . . . . . . . . . . . . . . . . . . .
+1.11.7 Evaluator setup . . . . . . . . . . . . . . . . . . . . . .
+1.11.8 Reducing the memory consumption . . . . . . . . . . .
+CASP14 assessment . . . . . . . . . . . . . . . . . . . . . . . .
+1.12.1 Training procedure . . . . . . . . . . . . . . . . . . . .
+1.12.2 Inference and scoring . . . . . . . . . . . . . . . . . . .
+Ablation studies . . . . . . . . . . . . . . . . . . . . . . . . . .
+1.13.1 Architectural details . . . . . . . . . . . . . . . . . . .
+1.13.2 Procedure . . . . . . . . . . . . . . . . . . . . . . . . .
+1.13.3 Results . . . . . . . . . . . . . . . . . . . . . . . . . .
+Network probing details . . . . . . . . . . . . . . . . . . . . .
+Novel fold performance . . . . . . . . . . . . . . . . . . . . . .
+Visualization of attention . . . . . . . . . . . . . . . . . . . . .
+Additional results . . . . . . . . . . . . . . . . . . . . . . . . .
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+2
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+15
+16
+17
+17
+18
+20
+20
+20
+21
+23
+26
+26
+28
+29
+30
+31
+32
+32
+33
+34
+35
+36
+37
+37
+39
+39
+39
+40
+41
+43
+43
+43
+44
+44
+44
+44
+45
+45
+46
+46
+46
+47
+47
+49
+49
+51
+52
+54
+56
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+3
+
+List of Supplementary Figures
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+
+Input feature embeddings . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+MSA row-wise gated self-attention with pair bias . . . . . . . . . . . . . . . .
+MSA column-wise gated self-attention . . . . . . . . . . . . . . . . . . . . . .
+MSA transition layer . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+Outer product mean . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+Triangular multiplicative update using “outgoing” edges . . . . . . . . . . . .
+Triangular self-attention around starting node . . . . . . . . . . . . . . . . . .
+Invariant Point Attention Module . . . . . . . . . . . . . . . . . . . . . . . . .
+Accuracy distribution of a model trained with dRMSD instead of the FAPE loss
+Accuracy of ablations depending on the MSA depth . . . . . . . . . . . . . . .
+Performance on a set of novel structures . . . . . . . . . . . . . . . . . . . . .
+Visualization of row-wise pair attention . . . . . . . . . . . . . . . . . . . . .
+Visualization of attention in the MSA along sequences . . . . . . . . . . . . .
+Median all-atom RMSD95 on the CASP14 set . . . . . . . . . . . . . . . . . .
+RMSD histograms on the template-reduced recent PDB set. . . . . . . . . . . .
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+11
+15
+16
+16
+17
+18
+19
+27
+36
+50
+53
+54
+55
+56
+57
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+8
+24
+31
+43
+46
+57
+
+MSA block deletion . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+AlphaFold Model Inference . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+InputEmbedder Embeddings for initial representations . . . . . . . . . . . . . . . . . . . . .
+relpos Relative position encoding . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+one_hot One-hot encoding with nearest bin . . . . . . . . . . . . . . . . . . . . . . . . . . .
+EvoformerStack Evoformer stack . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+MSARowAttentionWithPairBias MSA row-wise gated self-attention with pair bias . . . . . .
+MSAColumnAttention MSA column-wise gated self-attention . . . . . . . . . . . . . . . . . .
+MSATransition Transition layer in the MSA stack . . . . . . . . . . . . . . . . . . . . . . .
+OuterProductMean Outer product mean . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+TriangleMultiplicationOutgoing Triangular multiplicative update using “outgoing” edges
+TriangleMultiplicationIncoming Triangular multiplicative update using “incoming” edges
+TriangleAttentionStartingNode Triangular gated self-attention around starting node . . . .
+TriangleAttentionEndingNode Triangular gated self-attention around ending node . . . . .
+PairTransition Transition layer in the pair stack . . . . . . . . . . . . . . . . . . . . . . . .
+TemplatePairStack Template pair stack . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+TemplatePointwiseAttention Template pointwise attention . . . . . . . . . . . . . . . . . .
+ExtraMsaStack Extra MSA stack . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+MSAColumnGlobalAttention MSA global column-wise gated self-attention . . . . . . . . . .
+StructureModule Structure module . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+
+6
+12
+13
+13
+13
+14
+15
+16
+17
+17
+18
+18
+19
+20
+20
+21
+21
+22
+22
+25
+
+List of Supplementary Tables
+1
+2
+3
+4
+5
+6
+
+Input features to the model . . . . . . . . . . . . . . . . . . . . . . . . .
+Rigid groups for constructing all atoms from given torsion angles . . . . .
+Ambiguous atom names due to 180◦ -rotation-symmetry . . . . . . . . . .
+AlphaFold training protocol . . . . . . . . . . . . . . . . . . . . . . . .
+Training protocol for CASP14 models . . . . . . . . . . . . . . . . . . .
+Quartiles of RMSD distributions on the template-reduced recent PDB set.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+
+List of Algorithms
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+
+MSABlockDeletion
+Inference
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+
+Rigid from 3 points using the Gram–Schmidt process . . . . . . . . .
+InvariantPointAttention Invariant point attention (IPA) . . . . . . . . . . . . . . . . .
+BackboneUpdate Backbone update . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+computeAllAtomCoordinates Compute all atom coordinates . . . . . . . . . . . . . . . .
+makeRotX Make a transformation that rotates around the x-axis . . . . . . . . . . . . . . .
+renameSymmetricGroundTruthAtoms Rename symmetric ground truth atoms . . . . . . .
+torsionAngleLoss Side chain and backbone torsion angle loss . . . . . . . . . . . . . . .
+computeFAPE Compute the Frame aligned point error . . . . . . . . . . . . . . . . . . . .
+predictPerResidueLDDT Predict model confidence pLDDT . . . . . . . . . . . . . . . .
+RecyclingInference Generic recycling inference procedure . . . . . . . . . . . . . . . .
+RecyclingTraining Generic recycling training procedure . . . . . . . . . . . . . . . . .
+RecyclingEmbedder Embedding of Evoformer and Structure module outputs for recycling
+rigidFrom3Points
+
+4
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+
+26
+28
+29
+30
+30
+31
+33
+34
+37
+41
+41
+42
+
+1 Supplementary Methods
+1.1 Notation
+We denote the number of residues in the input primary sequence by Nres (cropped during training), the number
+of templates used in the model by Ntempl , the number of all available MSA sequences by Nall_seq , the number of
+clusters after MSA clustering by Nclust , the number of sequences processed in the MSA stack by Nseq (where
+Nseq = Nclust + Ntempl ), and the number of unclustered MSA sequences by Nextra_seq (after sub-sampling,
+see subsubsection 1.2.7 for details). Concrete values for these parameters are given in the training details
+(subsection 1.11). On the model side, we also denote the number of blocks in Evoformer-like stacks by Nblock
+(subsection 1.6), the number of ensembling iterations by Nensemble (subsubsection 1.11.2), and the number of
+recycling iterations by Ncycle (subsection 1.10).
+We present architectural details in Algorithms, where we use the following conventions. We use capitalized
+operator names when they encapsulate learnt parameters, e.g. we use Linear for a linear transformation with
+a weights matrix W and a bias vector b, and LinearNoBias for the linear transformation without the bias
+vector. Note that when we have multiple outputs from the Linear operator at the same line of an algorithm,
+we imply different trainable weights for each output. We use LayerNorm for the layer normalization [85]
+operating on the channel dimensions with learnable per-channel gains and biases. We also use capitalized
+names for random operators, such as those related to dropout. For functions without parameters we use lower
+case operator names, e.g. sigmoid, softmax, stopgrad. We use for the element-wise multiplication, ⊗
+for the outer product, ⊕ for the outer sum, and a> b for the dot product of two vectors. Indices i, j, k
+always operate on the residue dimension, indices s, t on the sequence dimension, and index h on the attention
+heads dimension. The channel dimension is implicit and we type the channel-wise vectors in bold, e.g. zij .
+Algorithms operate on sets of such vectors, e.g. we use {zij } to denote all pair representations.
+In the structure module, we denote Euclidean transformations corresponding to frames by T = (R, ~t), with
+R ∈ R3×3 for the rotation and ~t ∈ R3 for the translation components. We use the ◦ operator to denote
+application of a transformation to an atomic position ~x ∈ R3 :
+~xresult = T ◦ ~x
+= (R, ~t) ◦ ~x
+= R~x + ~t .
+The ◦ operator also denotes composition of Euclidean transformations:
+Tresult = T1 ◦ T2
+(Rresult , ~tresult ) = (R1 , ~t1 ) ◦ (R2 , ~t2 )
+= (R1 R2 , R1~t2 + ~t1 )
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+5
+
+We use T −1 to denote the group inverse of the transform T :
+T −1 = (R, ~t)−1
+= (R−1 , −R−1~t)
+
+1.2 Data pipeline
+The data pipeline is the first step when running AlphaFold. It takes an mmCIF file (in the training mode) or a
+FASTA file (in the inference mode) and produces input features for the model. In the training mode, a single
+mmCIF file can produce multiple separate training examples, one for each chain in the file. The data pipeline
+includes the following steps.
+1.2.1 Parsing
+The input file is parsed and basic metadata is extracted from it. For FASTA, this is only the sequence and
+name; for mmCIF this is the sequence, atom coordinates, release date, name, and resolution. We also resolve
+alternative locations for atoms/residues, taking the one with the largest occupancy, change MSE residues into
+MET residues, and fix arginine naming ambiguities (making sure that NH1 is always closer to CD than NH2).
+1.2.2 Genetic search
+Multiple genetic databases are searched using JackHMMER v3.3 [86] and HHBlits v3.0-beta.3 [87]. We used
+JackHMMER with MGnify [88], JackHMMER with UniRef90 [89], HHBlits with Uniclust30 [90] + BFD
+(see Input and Data Sources in the main text methods for details). The output multiple sequence alignments
+(MSAs) are de-duplicated and stacked.
+The MSA depth was limited to 5,000 sequences for JackHMMER with MGnify, 10,000 sequences for
+JackHMMER with UniRef90 and unlimited for HHBlits. The following flags were set to a non-default value
+for each of the tools:
+JackHMMER: -N 1 -E 0.0001 --incE 0.0001 --F1 0.0005 --F2 0.00005 --F3 0.0000005.
+HHBlits: -n 3 -e 0.001 -realign_max 100000 -maxfilt 100000 -min_prefilter_hits 1000 -maxseq 1000000.
+1.2.3 Template search
+The structural templates fed to the model are retrieved with the following steps:
+1. The UniRef90 MSA obtained in the previous step is used to search PDB70 using HHSearch [91]. The
+only flag set to a non-default value for HHSearch runs was -maxseq 1000000.
+2. During training we exclude all templates that were released after the query training structure. We also
+filter out templates that are identical to (or a subset of) the input primary sequence, or that are too small
+(less than 10 residues or of length less than 10% of the primary sequence).
+3. At inference time we provide the model the top 4 templates, sorted by the expected number of correctly
+aligned residues (the “sum_probs” feature output by HHSearch). At training time we first restrict the
+available templates to up to 20 with the highest “sum_probs”. Then we choose random k templates out
+of this restricted set of n templates, where k = min(Uniform[0, n], 4). This has the effect of showing
+the network potentially bad templates, or no templates at all, during training so the network cannot rely
+on just copying the template.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+6
+
+1.2.4 Training data
+With 75% probability a training example comes from the self-distillation set (see subsection 1.3) and with 25%
+probability the training example is a known structure from the Protein Data Bank. We loop over this hybrid
+set multiple times during training and we apply a number of stochastic filters (subsubsection 1.2.5), MSA preprocessing steps (subsubsection 1.2.6 and subsubsection 1.2.7), and residue cropping (subsubsection 1.2.8)
+every time when a protein is encountered. This means, we may observe different targets in training epochs,
+with different samples of the MSA data, and also cropped to different regions.
+1.2.5 Filtering
+The following filters are applied to the training data:
+• Input mmCIFs are restricted to have resolution less than 9 Å. This is not a very restrictive filter and only
+removes around 0.2% of structures.
+1
+• Protein chains are accepted with probability 512
+max(min(Nres , 512), 256), where Nres is the length of
+the chain. This re-balances the length distribution and makes the network train on crops from the longer
+chains more often.
+
+• Sequences are filtered out when any single amino acid accounts for more than 80% of the input primary
+sequence. This filter removes about 0.8% of sequences.
+• Protein chains are accepted with the probability inverse to the size of the cluster that this chain falls
+into. We use 40% sequence identity clusters of the Protein Data Bank clustered with MMSeqs2 [92].
+1.2.6 MSA block deletion
+During training contiguous blocks of sequences are deleted from the MSA (see Algorithm 1). The MSA is
+grouped by tool and ordered by the normal output of each tool, typically e-value. This means that similar
+sequences are more likely to be adjacent in the MSA and block deletions are more likely to generate diversity
+that removes whole branches of the phylogeny.
+Algorithm 1 MSA block deletion
+def MSABlockDeletion(msa) :
+1:
+
+block_size = b0.3 · Nall_seq c
+
+2:
+
+to_delete = {}
+
+for all j ∈ [1, . . . , 5] do
+block_start ← uniform(1, Nall_seq )
+5:
+to_delete ← to_delete ∪ [block_start, . . . , block_start + block_size −1]
+3:
+4:
+
+6:
+
+end for
+
+7:
+
+keep ← [1, . . . , Nall_seq ] \ to_delete
+
+8:
+
+msa ← msakeep
+
+9:
+
+return msa
+
+1.2.7 MSA clustering
+2 × N , so it is highly
+The computational and peak memory cost of the main Evoformer module scales as Nseq
+res
+desirable to reduce the number of sequences used in the main Evoformer module for purely computational
+reasons. Our first version of this procedure randomly chose a fixed-size subset of sequences without replacement when the MSA was too large (originally 128 sequences). This procedure has the clear downside that
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+7
+
+sequences not included in the random subset have no influence on the prediction. The presented version is a
+modification of this procedure where we still choose a random subset of sequences without replacement to be
+representatives, but for each sequence in the full MSA we associate that sequence with the nearest sequence in
+the set of representatives (we call this “clustering” with random cluster centres though no attempt is made to
+ensure the cluster centres are well-distributed). To maintain the fixed-size and bounded cost properties, so we
+use only the amino acid and deletion frequencies of all sequences associated with each representative sequence
+and provide these mini-profiles as extra features in addition to the representative sequence (we roughly double
+the number of input features of each representative sequence without increasing the number of representative
+sequences). This allows all sequences to have some influence on the final prediction, which seems desirable.
+Since this procedure achieves the goal of bounding computational cost, we have not experimented much
+with alternatives to the procedure. We have attempted a couple of methods to encourage diversity among the
+sampled sequences at inference time (e.g. a bias to pick representatives far from each other), but gains were
+very small to none so we did not pursue them further.
+In detail the MSA is clustered (grouped) using the following procedure:
+1. Nclust sequences are selected randomly as MSA cluster centres, the first cluster centre is always set to
+the query amino acid sequence.
+2. A mask is generated such that each position in a MSA cluster centre has a 15% probability of being
+included in the mask. Each element in the MSA that is included in the mask is replaced in the following
+way:
+• With 10% probability amino acids are replaced with a uniformly sampled random amino acid.
+• With 10% probability amino acids are replaced with an amino acid sampled from the MSA profile
+for a given position.
+• With 10% probability amino acids are not replaced.
+• With 70% probability amino acids are replaced with a special token (masked_msa_token).
+These masked positions are the prediction targets used in subsubsection 1.9.9. Note that this masking
+is used both at training time, and at inference time.
+3. The remaining sequences are assigned to their closest cluster by Hamming distance (ignoring masked
+out residues and gaps). For each sequence cluster, several statistics are computed, such as the per residue
+amino acid distribution). See “cluster” features in Table 1 for a full description.
+4. The MSA sequences that have not been selected as cluster centres at step 1 are used to randomly sample
+Nextra_seq sequences without replacement. If there are less than Nextra_seq remaining sequences available,
+all of them are used. These sequences form “extra” MSA features in Table 1.
+Please note that throughout the rest of the manuscript we use the term “MSA clusters” to refer to the clusters
+produced at step 3 above.
+1.2.8 Residue cropping
+During training the residue dimension in all data is cropped in the following way.
+1. As described in subsubsection 1.11.5 mini-batches are processed in two modes. In the unclamped loss
+mode the crop start position is sampled from Uniform[1, n − x + 1] where n is seq_length minus
+crop_size and x is sampled from Uniform[0, n]. In clamped loss mode the crop position is sampled
+from Uniform[1, n + 1].
+2. The residues dimension is cropped to a single contiguous region, with the crop start position defined
+above. The final crop size is denoted by Nres and its concrete value is provided in subsection 1.11.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+8
+
+1.2.9 Featurization and model inputs
+Features in Table 1 are computed and aggregated into the following main inputs to the model:
+• target_feat This is a feature of size [Nres , 21] consisting of the “aatype” feature.
+• residue_index This is a feature of size [Nres ] consisting of the “residue_index” feature.
+• msa_feat This is a feature of size [Nclust , Nres , 49] constructed by concatenating “cluster_msa”, “cluster_has_deletion”, “cluster_deletion_value”, “cluster_deletion_mean”, “cluster_profile”. We draw Ncycle ×
+Nensemble random samples from this feature to provide each recycling/ensembling iteration of the network with a different sample (see subsubsection 1.11.2).
+• extra_msa_feat This is a feature of size [Nextra_seq , Nres , 25] constructed by concatenating “extra_msa”,
+“extra_msa_has_deletion”, “extra_msa_deletion_value”. Together with “msa_feat’ above we also draw
+Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2).
+• template_pair_feat This is a feature of size [Ntempl , Nres , Nres , 88] and consists of concatenation of the
+pair residue features “template_distogram”, “template_unit_vector”, and also several residue features,
+which are transformed into pair features. The “template_aatype” feature is included via tiling and stacking (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask”
+and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj .
+• template_angle_feat This is a feature of size [Ntempl , Nres , 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”.
+
+Table 1 Input features to the model. Feature dimensions: Nres is the number of residues, Nclust is the
+number of MSA clusters, Nextra_seq is the number of additional unclustered MSA sequences, and Ntempl is the
+number of templates.
+
+Feature & Shape
+
+Description
+
+aatype
+[Nres , 21]
+
+One-hot representation of the input amino acid sequence (20 amino
+acids + unknown).
+
+cluster_msa
+[Nclust , Nres , 23]
+
+One-hot representation of the msa cluster centre sequences (20 amino
+acids + unknown + gap + masked_msa_token).
+
+cluster_has_deletion
+[Nclust , Nres , 1]
+
+A binary feature indicating if there is a deletion to the left of the residue
+in the MSA cluster centres.
+
+cluster_deletion_value
+[Nclust , Nres , 1]
+
+The raw deletion counts (the number of deletions to the left of every
+position in the MSA cluster centres) are transformed to the range [0, 1]
+using π2 arctan d3 where d are the raw counts.
+
+cluster_deletion_mean
+[Nclust , Nres , 1]
+
+The
+mean deletions for every residue in every cluster are computed as
+1 Pn
+i=1 dij where n is the number of sequences in the cluster and dij
+n
+is the number of deletions to the left of the ith sequence and jth residue.
+These are then transformed into the range [0, 1] in the same way as for
+the cluster_deletion_value feature above.
+
+cluster_profile
+[Nclust , Nres , 23]
+
+The distribution across amino acid types for each residue in each MSA
+cluster (20 amino acids + unknown + gap + masked_msa_token).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+Feature & Shape
+
+Description
+
+extra_msa
+[Nextra_seq , Nres , 23]
+
+One-hot representation of all MSA sequences not selected as cluster
+centres (20 amino acids + unknown + gap + masked_msa_token).
+
+extra_msa_has_deletion
+[Nextra_seq , Nres , 1]
+
+A binary feature indicating if there is a deletion to the left of the residue
+in the extra MSA sequences.
+
+extra_msa_deletion_value
+[Nextra_seq , Nres , 1]
+
+The raw deletion counts to the left of every residue in the extra_msa,
+converted to the range [0, 1] using the same formula as for cluster_deletion_value.
+
+template_aatype
+[Ntempl , Nres , 22]
+
+One-hot representation of the amino acid sequence (20 amino acids +
+unknown and gap).
+
+template_mask
+[Ntempl , Nres ]
+
+Mask indicating if a template residue exists and has coordinates.
+
+template_pseudo_beta_mask
+[Ntempl , Nres ]
+
+Mask indicating if the beta carbon (alpha carbon for glycine) atom has
+coordinates for the template at this residue.
+
+9
+
+template_backbone_frame_mask A mask indicating if the coordinates of all the required atoms to com[Ntempl , Nres ]
+pute the backbone frame (used in the template_unit_vector feature) exist.
+template_distogram
+[Ntempl , Nres , Nres , 39]
+
+A one-hot pairwise feature indicating the distance between beta carbons (alpha carbon used for glycine) atoms. The pairwise distances are
+discretized into 38 bins of equal width between 3.25 Å and 50.75 Å;
+and one more bin contains any larger distances.
+
+template_unit_vector
+[Ntempl , Nres , Nres , 3]
+
+The unit vector of the displacement of the alpha carbon atom of all
+residues within the local frame of each residue. These local frames are
+computed in the same way as for the target structure, see subsubsection 1.8.1.
+
+template_torsion_angles
+[Ntempl , Nres , 14]
+
+The 3 backbone torsion angles and up to 4 side-chain torsion angles for
+each residue represented as sine and cosine encoding.
+
+template_alt_torsion_angles
+[Ntempl , Nres , 14]
+
+Alternative torsion angles for side chain parts with 180o -rotation symmetry.
+
+template_torsion_angles_mask
+[Ntempl , Nres , 14]
+
+A mask indicating if the torsion angle is present in the template structure.
+
+residue_index
+[Nres ]
+
+The index into the original amino acid sequence.
+
+1.3 Self-distillation dataset
+We perform a self-distillation procedure similar to [93] on unlabelled protein sequences. To create the sequence dataset we compute multiple sequence alignments of every cluster in Uniclust30 (version 2018-08)
+against the same database. We then greedily remove sequences which appear in another sequence’s MSA to
+give 6,318,986 sequences in total. We further filter this by removing sequences with more than 1,024 or fewer
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+10
+
+than 200 amino acids, or whose MSA contain fewer than 200 alignments. This gives a final dataset of 355,993
+sequences.
+For building the distillation set predicted structures, we use a single (no re-ranking) “undistilled” model,
+i.e. trained on just the PDB dataset. Using this undistilled model, we predict the structure of every sequence
+in the set constructed above to create a dataset of structures to use at training time. For every pair of predicted
+residues we calculate a confidence metric by computing the Kullback–Leibler divergence between the pairwise
+distance distribution and a reference distribution for that residue separation:
+
+
+cij = DKL pref
+(r)
+p
+(r)
+.
+(1)
+i,j
+|i−j|
+The reference distribution is computed by taking distance distribution predictions for 1,000 randomly sampled sequences in Uniclust30 and computing the mean distribution for a given sequence separation.
+This pairwise metric cij is then averaged over j corresponding to a maximum sequence separation of ±128
+and excluding i = j to give a per-residue confidence metric ci . Similar to pLDDT, we find that higher values
+of this confidence correlate with higher prediction accuracy. At training time we mask out residues with
+ci < 0.5. This KL-based metric was introduced into the model before we developed pLDDT, and we expect
+that filtering the distillation set based on pLDDT would work equally well or better.
+At training time, extra augmentation is added to distillation dataset examples by uniformly sampling the
+MSA to 1000 sequences without replacement (this is on top of any sampling that happens in the data pipeline,
+see subsection 1.2).
+
+1.4 AlphaFold Inference
+For inference, the AlphaFold receives input features derived from the amino-acid sequence, MSA, and templates (see subsubsection 1.2.9) and outputs features including atom coordinates, the distogram, and perresidue confidence scores. Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
+The whole network is executed sequentially Ncycle times, where the outputs of the former execution are
+recycled as inputs for the next execution (see subsection 1.10 for details). The first part of the network (feature
+embedding and Evoformer, see Suppl. Fig. 1) is executed independently Nensemble times with differently
+sampled inputs (see subsubsection 1.11.2). Their outputs are averaged to create the inputs for the Structure
+module and for recycling. These averaged Evoformer embeddings are denoted with an extra hat, e.g. ẑij for
+pair representations and ŝi for single representations.
+random samples
+o of “msa_feat”
+n The Ncycleo× Nensemble
+n
+
+and “extra_msa_feat” are denoted as a set of sets {fsmsa_feat
+}c,n . Please note that
+}c,n , and {fsextra_msa_feat
+ei
+ci
+ensembling is used only during inference and it has a very minor impact on the accuracy in the final system
+(subsubsection 1.12.2), thus can be considered as an optional technique.
+The first part of the network (Algorithm 2 line 5) starts with embedding a new sample from the MSA
+(see subsection 1.5 for details) to create the initial version of the MSA representation {msi }, and the pair
+representation {zij }. The first row of the MSA representation and the full pair representation are updated
+(Algorithm 2 line 6) by the recycled outputs from the previous iteration (see subsection 1.10 for details) – for
+the first iteration the recycled outputs are initialized to zero.
+The next steps integrate the information from the templates (Algorithm 2 line 7). The “template_angle_feat”
+(derived from amino acid types and the torsion angles) are embedded by a shallow MLP and concatenated
+to the MSA representation. The “template_pair_feat” (derived from residue pairs, see subsubsection 1.2.9)
+are embedded by a shallow attention network (see subsubsection 1.7.1 for details) and added to the pair
+representation.
+The final step of the embedding procedure (Algorithm 2 line 14) processes the extra MSA features (derived
+from individual unclustered MSA sequences) by shallow Evoformer-like network that is optimized for the
+large number of sequences (see subsubsection 1.7.2) to update the pair representation.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+extra_msa_feat
+(se, r, fe)
+
+extra MSA
+representation
+(se, r, ce)
+
+Linear fe→ ce
+
+residue_index (r)
+
+11
+
+Extra
+MSA
+Stack
+
+relpos → (r, r, cz)
+Linear f → cz
+
+Linear f → cz
+
+target_feat (r, f)
+
+Linear f → cm
+
+pair
+representation
+(r, r, cz)
+
++
+
+outer sum
+
+template_angle_feat
+(st, r, fa)
+
+template_pair_feat
+(st, r, r, fp)
+
++
+Main
+Evoformer
+Stack
+
+tile → (sc, r, cm)
+MSA
+representation
+(sc, r, cm)
+
++
+msa_feat
+(sc, r, fc)
+
+R
+
+R
+
+concat
+
+Linear fc→ cm
+
+Linear fa→ cm
+
+relu
+
+Linear cm→ cm
+
+embed → (r, r, cz)
+
+Supplementary Figure 1 Input feature embeddings. Dimension names: r: residues, f : features, c: channels, sc : clustered MSA sequences, se : extra MSA sequences, st : template sequences. Operator relpos is
+defined in Algorithm 4. Template embedding and extra MSA stack are explained in subsection 1.7. Recycling
+injection is denoted with R, see subsection 1.10 for details.
+
+The main trunk of the network is the Evoformer stack (subsection 1.6) that produces the final representations (Algorithm 2 line 17). The pair representation, the first row of the MSA representation and a single
+representation derived from that row are kept for recycling and the structure module.
+The second part of the network, the Structure Module (Algorithm 2 line 21), takes the final representations
+pLDDT
+as input and predicts the atom coordinates {~xai } and the per-residue confidence {ri
+} (see subsection 1.8).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+12
+
+Algorithm 2 AlphaFold Model Inference
+
+n
+o n
+o
+target_feat
+extra_msa_feat
+def Inference {fi
+}, {firesidue_index }, {fsmsa_feat
+}
+,
+{f
+}
+,
+se i
+ci
+c,n
+c,n
+
+template_angle_feat
+template_pair_feat
+{fst i
+}, {fst ij
+}, Ncycle = 4, Nensemble = 3 :
+# Recycling iterations:
+prev
+
+prev
+
+prev,Cβ
+
+= 0, 0, ~0
+
+1:
+
+m̂1i , ẑij , ~xi
+
+2:
+
+for all c ∈ [1, . . . , Ncycle ] do
+
+# shared weights
+
+#
+
+Average embeddings in ensemble:
+
+3:
+
+{m̂1i }, {ẑij }, {ŝi } = 0, 0, 0
+
+4:
+
+for all n ∈ [1, . . . , Nensemble ] do
+
+# shared weights
+
+#
+
+Embed clustered MSA (use different MSA samples in each iteration):
+
+5:
+
+{msc i }, {zij } = InputEmbedder({fi
+
+#
+
+Inject previous outputs for recycling:
+
+6:
+
+{m1i }, {zij } += RecyclingEmbedder({m̂1i }, {ẑij }, {~xi
+
+#
+
+Embed templates:
+
+7:
+
+ast i ← Linear(relu(Linear(fst i
+
+8:
+
+msi = concats (msc i , ast i )
+
+9:
+
+tst ij = Linear(fst ij
+
+target_feat
+
+}, {firesidue_index }, {fsmsa_feat
+}c,n )
+ci
+
+prev
+
+template_angle_feat
+
+template_pair_feat
+
+prev
+
+12:
+
+end for
+
+13:
+
+{zij } += TemplatePointwiseAttention({tst ij }, {zij })
+Embed extra MSA features (use different samples in each iteration):
+
+14:
+
+{ase i } ← {fsextra_msa_feat
+}c,n
+ei
+
+15:
+
+ese i = Linear(ase i )
+
+16:
+
+{zij } ← ExtraMsaStack({ese i }, {zij })
+
+#
+
+ese i ∈ Rce , ce = 64
+
+Main trunk of the network:
+
+17:
+
+{msi }, {zij }, {si } ← EvoformerStack({msi }, {zij })
+
+18:
+
+{m̂1i }, {ẑij }, {ŝi } += {m1i }, {zij }, {si }
+
+19:
+
+end for
+
+20:
+
+{m̂1i }, {ẑij }, {ŝi } /= Nensemble
+
+#
+
+ast i ∈ Rcm , cm = 256
+tst ij ∈ Rct , ct = 64
+
+)
+
+11:
+
+#
+
+})
+
+)))
+
+for all st ∈ [1, . . . , Ntempl ] do
+# shared weights
+{tst ij } ← TemplatePairStack({tst ij })
+
+10:
+
+prev,Cβ
+
+Structure and confidence prediction:
+pLDDT
+
+21:
+
+{~xai }, {ri
+
+22:
+
+{m̂1i }, {ẑij }, {~xi
+
+prev
+
+} = StructureModule({ŝi }, {ẑij })
+
+prev
+
+23:
+
+end for
+
+24:
+
+return {~xai }, {ri
+
+prev,Cβ
+
+pLDDT
+
+}
+
+β
+
+} ← {m̂1i }, {ẑij }, {~xCi }
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+13
+
+1.5 Input embeddings
+Input features listed in subsubsection 1.2.9 are embedded into the network according to the Suppl. Fig. 1.
+Initial embedding details are also presented in Algorithm 3. Input primary sequence and MSA features
+are transformed to form MSA representation {msi } with msi ∈ Rcm , cm = 256, and s ∈ {1 . . . Nseq },
+i ∈ {1 . . . Nres }. Primary sequence features are transformed to form pair representation {zij } with zij ∈ Rcz ,
+cz = 128, and i, j ∈ {1 . . . Nres }. These two representations are also informed by the templates and unclustered MSA features. The details of their corresponding embedding modules are provided in subsection 1.7.
+Algorithm 3 Embeddings for initial representations
+target_feat
+
+def InputEmbedder({fi
+
+target_feat
+
+}, {firesidue_index }, {fsmsa_feat
+}) :
+ci
+ai , bi ∈ Rcz , cz = 128
+
+1:
+
+ai , bi = Linear(fi
+
+2:
+
+zij = ai + bj
+
+3:
+
+{zij } += relpos({firesidue_index })
+
+4:
+
+msc i = Linear(fsmsa_feat
+) + Linear(fi
+ci
+
+5:
+
+return {msc i }, {zij }
+
+)
+
+zij ∈ Rcz , cz = 128
+target_feat
+
+)
+
+msc i ∈ Rcm , cm = 256
+
+To provide the network with information about the positions of residues in the chain, we also encode
+relative positional features (Algorithm 4) into the initial pair representations. Specifically, for a residue pair
+i, j ∈ {1 . . . Nres } we compute the clipped relative distance within a chain, encode it as a one-hot vector,
+and add this vector’s linear projection to zij . Since we are clipping by the maximum value 32, any larger
+distances within the residue chain will not be distinguished by this feature. This inductive bias de-emphasizes
+primary sequence distances. Compared to the more traditional approach of encoding positions in the frequency
+space [94], this relative encoding scheme empirically allows the network to be evaluated without quality
+degradation on much longer sequences than it was trained on. A related construction was used in [95].
+Algorithm 4 Relative position encoding
+def relpos({firesidue_index }, vbins = [−32, −31, . . . , 32]) :
+1:
+
+dij = firesidue_index − fjresidue_index
+
+2:
+
+pij = Linear(one_hot(dij , vbins ))
+
+3:
+
+return {pij }
+
+dij ∈ Z
+pij ∈ Rcz
+
+Algorithm 5 One-hot encoding with nearest bin
+def one_hot(x, vbins ) :
+1:
+
+p=0
+
+2:
+
+b = arg min(|x − vbins |)
+
+3:
+
+pb = 1
+
+4:
+
+return p
+
+x ∈ R, vbins ∈ RNbins
+p ∈ RNbins
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+14
+
+1.6 Evoformer blocks
+The network has a two tower architecture with axial self-attention in the MSA stack; triangular multiplicative
+updates and triangular self-attention in the pair stack; and outer product mean and attention biasing to allow
+communication between the stacks.
+The main trunk of the network consists of Nblock = 48 Evoformer blocks (Fig. 1e, 3a, Algorithm 6). Each
+block has an MSA representation {msi } and a pair representation {zij } as its input and output and processes
+them with several layers. Each layer output is added via a residual connection to the current representations.
+Some layer outputs are passed through Dropout [96] before they are added (see subsubsection 1.11.6 for
+details).
+The final Evoformer block provides a highly processed MSA representation {msi } and a pair representation {zij }, which contain information required for the structure module (subsection 1.8) and auxiliary network
+heads (subsection 1.9). The prediction modules are also using a “single” sequence representation {si } with
+si ∈ Rcs , cs = 384 and i ∈ {1 . . . Nres }. This single representation is derived by a linear projection of the
+first row of the MSA representation.
+We now present details of the individual layers.
+Algorithm 6 Evoformer stack
+def EvoformerStack({msi }, {zij }, Nblock = 48, cs = 384) :
+1:
+
+for all l ∈ [1, . . . , Nblock ] do
+
+#
+
+MSA stack
+
+2:
+
+{msi } += DropoutRowwise0.15 (MSARowAttentionWithPairBias({msi }, {zij }))
+
+3:
+
+{msi } += MSAColumnAttention({msi })
+
+4:
+
+{msi } += MSATransition({msi })
+
+#
+
+Communication
+
+5:
+
+{zij } += OuterProductMean({msi })
+
+#
+
+Pair stack
+
+6:
+
+{zij } += DropoutRowwise0.25 (TriangleMultiplicationOutgoing({zij }))
+
+7:
+
+{zij } += DropoutRowwise0.25 (TriangleMultiplicationIncoming({zij }))
+
+8:
+
+{zij } += DropoutRowwise0.25 (TriangleAttentionStartingNode({zij }))
+
+9:
+
+{zij } += DropoutColumnwise0.25 (TriangleAttentionEndingNode({zij }))
+
+10:
+11:
+
+{zij } += PairTransition({zij })
+end for
+
+# Extract the single representation
+12:
+
+si = Linear(m1i )
+
+13:
+
+return {msi }, {zij }, {si }
+
+si ∈ Rcs
+
+1.6.1 MSA row-wise gated self-attention with pair bias
+MSA representations are processed with consecutive blocks of gated row-wise and column-wise self-attention
+blocks. The row-wise version (Suppl. Fig. 2 and Algorithm 7) builds attention weights for residue pairs
+and integrates the information from the pair representation as an additional bias term (line 3). This allows
+communication from the pair stack into the MSA stack to encourage consistency between them.
+
+sigmoid
+values (rv,h,c)
+
+Linear cm→(h,c)
+keys (rv,h,c)
+
+MSA repr.
+(s,r,cm)
+input (r,cm)
+
+pair
+representation
+(r,r,cz)
+
+Linear cm→(h,c)
+
+queries (rq,h,c)
+
+Linear cm→(h,c)
+
+dot-product
+affinities
+(rq,rv,h)
+
+Linear cz→h
+
++
+
+softmax rv
+
+attention
+weights
+(rq,rv,h)
+
+output (rq,h,c)
+
+Linear cm→(h,c)
+
+15
+
+gating (rq,h,c)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+Linear (h,c)→cm
+
+MSA repr.
+(s,r,cm)
+updates (r,cm)
+
+pair bias
+(rq,rv,h)
+
+Supplementary Figure 2 MSA row-wise gated self-attention with pair bias. Dimensions: s: sequences, r:
+residues, c: channels, h: heads.
+
+Algorithm 7 MSA row-wise gated self-attention with pair bias
+def MSARowAttentionWithPairBias({msi }, {zij }, c = 32, Nhead = 8) :
+# Input projections
+1:
+
+msi ← LayerNorm(msi )
+
+2:
+
+h = LinearNoBias(m )
+qhsi , khsi , vsi
+si
+
+bhij = LinearNoBias(LayerNorm(zij ))
+
+h = sigmoid Linear(m )
+4: gsi
+si
+
+h ∈ Rc , h ∈ {1, . . . , N
+qhsi , khsi , vsi
+head }
+
+3:
+
+h ∈ Rc
+gsi
+
+# Attention
+
+
+>
+ahsij = softmaxj √1c qhsi khsj + bhij
+P h h
+h
+6: oh
+si = gsi
+j asij vsj
+5:
+
+# Output projection
+
+
+7: m̃si = Linear concath (oh
+)
+si
+8:
+
+m̃si ∈ Rcm
+
+return {m̃si }
+
+1.6.2 MSA column-wise gated self-attention
+The column-wise attention (and Suppl. Fig. 3 and Algorithm 8) lets the elements that belong to the same
+target residue exchange information. In both attention blocks the number of heads Nheads = 8, and dimension
+of the keys, queries, and values c = 32.
+
+MSA repr.
+(s,r,cm)
+
+dot-prod.
+affinities
+(sq,sv,h)
+
+softmax sv
+
+attention
+weights
+(sq,sv,h)
+
+out (sq,h,c)
+
+keys (sv,h,c)
+
+Linear cm→(h,c)
+
+Linear cm→(h,c)
+
+Supplementary Figure 3
+c: channels, h: heads.
+
+val. (sv,h,c)
+
+Linear cm→(h,c)
+
+16
+
+update (s,cm)
+
+sigmoid
+
+que. (sq,h,c)
+
+MSA repr.
+(s,r,cm)
+
+input (s,cm)
+
+Linear cm→(h,c)
+
+gat. (sq,h,c)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+Linear (h,c)→cm
+
+MSA column-wise gated self-attention. Dimensions: s: sequences, r: residues,
+
+Algorithm 8 MSA column-wise gated self-attention
+def MSAColumnAttention({msi }, c = 32, Nhead = 8) :
+# Input projections
+1:
+
+msi ← LayerNorm(msi )
+
+h = LinearNoBias(m )
+qhsi , khsi , vsi
+si
+
+h = sigmoid Linear(m )
+3: gsi
+si
+
+h ∈ Rc , h ∈ {1, . . . , N
+qhsi , khsi , vsi
+head }
+
+2:
+
+h ∈ Rc
+gsi
+
+# Attention
+
+
+>
+ahsti = softmaxt √1c qhsi khti
+P h h
+h
+5: oh
+si = gsi
+t asti vst
+4:
+
+# Output projection
+
+
+6: m̃si = Linear concath (oh
+)
+si
+7:
+
+m̃si ∈ Rcm
+
+return {m̃si }
+
+1.6.3 MSA transition
+After row-wise and column-wise attention the MSA stack contains a 2-layer MLP as the transition layer
+(Suppl. Fig. 4 and Algorithm 9). The intermediate number of channels expands the original number of
+channels by a factor of 4.
+MSA
+representation
+(s,r,cm)
+
+Supplementary Figure 4
+
+Linear cm→ 4cm
+
+relu
+
+Linear 4cm→ cm
+
+MSA
+representation
+(s,r,cm)
+
+MSA transition layer. Dimensions: s: sequences, r: residues, c: channels.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+17
+
+Algorithm 9 Transition layer in the MSA stack
+def MSATransition({msi }, n = 4) :
+1:
+
+msi ← LayerNorm(msi )
+
+2:
+
+asi = Linear(msi )
+
+3:
+
+msi ← Linear(relu(asi ))
+
+4:
+
+return {msi }
+
+asi ∈ Rn·cm
+
+1.6.4 Outer product mean
+The “Outer product mean” block transforms the MSA representation into an update for the pair representation
+(Suppl. Fig. 5 and Algorithm 10). All MSA entries are linearly projected to a smaller dimension c = 32 with
+two independent Linear transforms. The outer products of these vectors from two columns i and j are averaged
+over the sequences and projected to dimension cz to obtain an update for entry ij in the pair representation.
+This is a memory intensive operation, as it requires constructing high-dimensional intermediate tensors. See
+section 1.11.8 for implementation details.
+pair repr. (r, r, cz)
+
+j
+
+input (s,cm)
+
+j
+
+i
+
+Linear cm→c
+Linear cm→c
+
+Supplementary Figure 5
+
+outer
+product
+
+prods (s,c,c)
+
+i
+
+input (s,cm)
+
+MSA repr. (s,r,cm)
+
+mean s
+
+Linear (c,c)→ cz
+
+Outer product mean. Dimensions: s: sequences, r: residues, c: channels.
+
+Algorithm 10 Outer product mean
+def OuterProductMean({msi }, c = 32) :
+1:
+
+msi ← LayerNorm(msi )
+
+2:
+
+asi , bsi = Linear(msi )
+
+3:
+
+oij = flatten means (asi ⊗ bsj )
+
+4:
+
+zij = Linear(oij )
+
+5:
+
+return {zij }
+
+asi , bsi ∈ Rc
+
+
+oij ∈ Rc·c
+zij ∈ Rcz
+
+1.6.5 Triangular multiplicative update
+The triangular multiplicative update (Fig. 3c) updates the pair representation in the Evoformer block by
+combining information within each triangle of graph edges ij, ik, and jk. Each edge ij receives an update
+from the other two edges of all triangles, where it is involved. There are two symmetric versions, one for the
+“outgoing” edges (Suppl. Fig. 6 and Algorithm 11) and one for the “incoming” edges (Algorithm 12). The
+differences are highlighted in yellow.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+pair repr.
+(r,r,cz)
+
+i
+
+Linear cz→c
+
+left edges (r,c)
+
+j
+
+Linear cz→c
+
+right edges (r,c)
+
+Linear cz→c
+
+Linear cz→c
+
+Linear cz→cz
+
+sigmoid
+
+sigmoid
+
+sigmoid
+
+sum r
+
+LayerNorm
+
+j
+
+18
+
+pair repr. (r,r,cz)
+
+Linear c→cz
+
+i
+
+j
+
+Supplementary Figure 6
+c: channels.
+
+Triangular multiplicative update using “outgoing” edges. Dimensions: r: residues,
+
+Algorithm 11 Triangular multiplicative update using “outgoing” edges
+def TriangleMultiplicationOutgoing({zij }, c = 128) :
+1:
+
+zij ← LayerNorm(zij )
+
+aij , bij = sigmoid Linear(zij )
+
+3: gij = sigmoid Linear(zij )
+
+2:
+
+4:
+
+z̃ij = gij
+
+5:
+
+return {z̃ij }
+
+
+
+Linear(zij )
+
+aij , bij ∈ Rc
+gij ∈ Rcz
+
+Linear(LayerNorm(
+
+P
+
+k
+
+aik
+
+bjk ))
+
+z̃ij ∈ Rcz
+
+Algorithm 12 Triangular multiplicative update using “incoming” edges
+def TriangleMultiplicationIncoming({zij }, c = 128) :
+1:
+
+zij ← LayerNorm(zij )
+
+aij , bij = sigmoid Linear(zij )
+
+3: gij = sigmoid Linear(zij )
+
+2:
+
+4:
+
+z̃ij = gij
+
+5:
+
+return {z̃ij }
+
+
+
+Linear(LayerNorm(
+
+Linear(zij )
+
+aij , bij ∈ Rc
+gij ∈ Rcz
+
+P
+
+k
+
+aki
+
+bkj ))
+
+z̃ij ∈ Rcz
+
+1.6.6 Triangular self-attention
+The triangular self-attention (Fig. 3c) updates the pair representation in the Evoformer block. The “starting
+node” version (Suppl. Fig. 7 and Algorithm 13) updates the edge ij with values from all edges that share the
+same starting node i, (i.e. all edges ik). The decision whether edge ij will receive an update from edge ik is
+not only determined by their query-key similarity (as in standard attention [94]), but also modulated by the
+information bjk derived from the third edge jk of this triangle. Furthermore we extend the update with an
+additional gating gij derived from edge ij. The symmetric pair of this module operates on the edges around
+the ending node (Algorithm 14). The differences are highlighted in yellow.
+
+sigmoid
+left edges (rv,h,c)
+
+Linear cz→(h,c)
+left edges (rv,h,c)
+
+Linear cz→(h,c)
+
+input row (r,cz)
+
+central edges (rq,h,c)
+
+pair
+representation
+(r,r,cz)
+Linear cz→(h,c)
+
++
+
+softmax rv
+
+attention
+weights
+(rq,rv,h)
+
+pair
+representation
+(r,r,cz)
+Linear (h,c)→cz
+
+updates (r,cz)
+
+right edges
+(rq,rv,h)
+
+Linear cz→h
+
+Supplementary Figure 7
+nels, h: heads
+
+dot-product
+affinities
+(rq,rv,h)
+
+output (rq,h,c)
+
+Linear cz→(h,c)
+
+19
+
+central edges (rq,h,c)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+Triangular self-attention around starting node. Dimensions: r: residues, c: chan-
+
+Algorithm 13 Triangular gated self-attention around starting node
+def TriangleAttentionStartingNode({zij }, c = 32, Nhead = 4) :
+# Input projections
+1:
+
+zij ← LayerNorm(zij )
+
+2:
+
+h = LinearNoBias(z )
+qhij , khij , vij
+ij
+
+3:
+
+bhij = LinearNoBias(zij )
+
+4:
+
+h = sigmoid Linear(z )
+gij
+ij
+
+
+
+h ∈ Rc , h ∈ {1, . . . , N
+qhij , khij , vij
+head }
+
+h ∈ Rc
+gij
+
+# Attention
+
+
+>
+ahijk = softmaxk √1c qhij khik + bhjk
+P h h
+h
+6: oh
+ij = gij
+k aijk vik
+5:
+
+# Output projection
+
+
+7: z̃ij = Linear concath (oh
+)
+ij
+8:
+
+return {z̃ij }
+
+z̃ij ∈ Rcz
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+20
+
+Algorithm 14 Triangular gated self-attention around ending node
+def TriangleAttentionEndingNode({zij }, c = 32, Nhead = 4) :
+# Input projections
+1:
+
+zij ← LayerNorm(zij )
+
+2:
+
+h = LinearNoBias(z )
+qhij , khij , vij
+ij
+
+3:
+
+bhij = LinearNoBias(zij )
+
+4:
+
+h = sigmoid Linear(z )
+gij
+ij
+
+h ∈ Rc , h ∈ {1, . . . , N
+qhij , khij , vij
+head }
+
+h ∈ Rc
+gij
+
+
+
+# Attention
+5: ah
+ijk
+6:
+
+
+= softmaxk
+
+h
+ohij = gij
+
+P
+
+k
+
+√1
+c
+
+>
+qhij
+
+khkj
+
++
+
+bhki
+
+
+
+h
+ahijk vkj
+
+# Output projection
+
+ 
+7: z̃ij = Linear concath oh
+ij
+8:
+
+z̃ij ∈ Rcz
+
+return {z̃ij }
+
+1.6.7 Transition in the pair stack
+The transition layer in the pair stack (Algorithm 15) is equivalent to that in the MSA stack: a 2-layer MLP
+where the intermediate number of channels expands the original number of channels by a factor of 4.
+Algorithm 15 Transition layer in the pair stack
+def PairTransition({zij }, n = 4) :
+1:
+
+zij ← LayerNorm(zij )
+
+2:
+
+aij = Linear(zij )
+
+3:
+
+zij ← Linear(relu(aij ))
+
+4:
+
+return {zij }
+
+aij ∈ Rn·cz
+
+1.7 Additional inputs
+As outlined in Suppl. Fig. 1, the additional model inputs include templates and unclustered MSA sequences.
+In this section we explain how they are embedded in more detail.
+1.7.1 Template stack
+Pairwise template features are linearly projected to form initial template representations tst ij , with tst ij ∈
+Rct , ct = 64, and i, j ∈ {1 . . . Nres }, st ∈ {1 . . . Ntempl }. Each template representation is independently
+processed with the template pair stack (Algorithm 16) with all trainable parameters shared across templates.
+The output representations are aggregated with the template point-wise attention (Algorithm 17), where the
+pair representations {zij } are used to form the queries and attend over the individual templates. The outputs
+of this module are added to the pair representations (see Suppl. Fig. 1 or line 13 in Algorithm 2).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+21
+
+Furthermore, template torsion angle features are embedded with a small MLP and concatenated with the
+MSA representations as additional sequence rows (see Suppl. Fig. 1 or lines 7-8 in Algorithm 2). These
+additional rows are participating in all MSA stack operations, but not in the masked MSA loss (subsubsection 1.9.9). While template torsion angle and MSA features are conceptually different quantities, they are
+embedded with different sets of weights, thus the learning process presumably drives the embeddings to be
+comparable since they are processed by the same downstream modules with the same weights.
+Algorithm 16 Template pair stack
+def TemplatePairStack({tij }, Nblock = 2) :
+for all l ∈ [1, . . . , Nblock ] do
+2:
+{tij } += DropoutRowwise0.25 (TriangleAttentionStartingNode({tij }, c = 64, Nhead = 4))
+
+1:
+
+3:
+
+{tij } += DropoutColumnwise0.25 (TriangleAttentionEndingNode({tij }, c = 64, Nhead = 4))
+
+4:
+
+{tij } += DropoutRowwise0.25 (TriangleMultiplicationOutgoing({tij }, c = 64))
+
+5:
+
+{tij } += DropoutRowwise0.25 (TriangleMultiplicationIncoming({tij }, c = 64))
+
+6:
+
+{tij } += PairTransition({tij }, n = 2)
+
+7:
+
+end for
+
+8:
+
+return LayerNorm {tij }
+
+
+
+Algorithm 17 Template pointwise attention
+def TemplatePointwiseAttention({tst ij }, {zij }, c = 64, Nhead = 4) :
+1:
+
+qhij = LinearNoBias(zij )
+
+khst ij , vsht ij = LinearNoBias(tst ij )
+
+
+>
+√1 qh kh
+3: ah
+st ij = softmaxst
+ij
+s
+ij
+t
+c
+P h
+h
+h
+4: oij =
+st ast ij vst ij
+
+
+5: {z̃ij } = Linear concath ({oh
+})
+ij
+2:
+
+6:
+
+qhij ∈ Rc , h ∈ {1, . . . , Nhead }
+khst ij , vsht ij ∈ Rc
+
+z̃ij ∈ Rcz
+
+return {z̃ij }
+
+1.7.2 Unclustered MSA stack
+Unclustered MSA sequence features are linearly projected to form initial representations {ese i } with ese i ∈
+Rce , ce = 64, and se ∈ {1 . . . Nextra_seq }, i ∈ {1 . . . Nres }. These representations are processed with the Extra
+MSA stack containing 4 blocks (Algorithm 18). They are highly similar to the main Evoformer blocks, with
+the notable difference of using global column-wise self-attention (Algorithm 19) and smaller representation
+sizes to allow processing of the large number of sequences. The final pair representations are used as inputs
+for the main Evoformer stack (Algorithm 6), while the final MSA activations are unused (see Suppl. Fig. 1).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+22
+
+Algorithm 18 Extra MSA stack
+def ExtraMsaStack({ese i }, {zij }, Nblock = 4) :
+1:
+
+for all l ∈ [1, . . . , Nblock ] do
+
+#
+
+MSA stack
+
+2:
+
+{ese i } += DropoutRowwise0.15 (MSARowAttentionWithPairBias({ese i }, {zij }, c = 8 ))
+
+3:
+
+{ese i } += MSAColumn Global Attention({ese i }
+
+4:
+
+{ese i } += MSATransition({ese i })
+
+#
+
+Communication
+
+5:
+
+{zij } += OuterProductMean({ese i })
+
+#
+
+Pair stack
+
+6:
+
+{zij } += DropoutRowwise0.25 (TriangleMultiplicationOutgoing({zij }))
+
+7:
+
+{zij } += DropoutRowwise0.25 (TriangleMultiplicationIncoming({zij }))
+
+8:
+
+{zij } += DropoutRowwise0.25 (TriangleAttentionStartingNode({zij }))
+
+9:
+
+{zij } += DropoutColumnwise0.25 (TriangleAttentionEndingNode({zij }))
+
+10:
+
+{zij } += PairTransition({zij })
+
+11:
+
+end for
+
+12:
+
+return {zij }
+
+Algorithm 19 MSA global column-wise gated self-attention
+def MSAColumnGlobalAttention({msi }, c = 8, Nhead = 8) :
+# Input projections
+1:
+
+msi ← LayerNorm(msi )
+
+2:
+
+qhsi , ksi , vsi = LinearNoBias(msi )
+
+3:
+4:
+
+qhsi , ksi , vsi ∈ Rc , h ∈ {1, . . . , Nhead }
+
+qhi = means qhsi
+
+h = sigmoid Linear(m )
+gsi
+si
+
+h ∈ Rc
+gsi
+
+# Attention
+
+
+>
+ahti = softmaxt √1c qhi kti
+P h
+h
+6: oh
+si = gsi
+t ati vti
+5:
+
+# Output projection
+
+ 
+7: m̃si = Linear concath oh
+si
+8:
+
+return {m̃si }
+
+m̃si ∈ Rcm
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+23
+
+1.8 Structure module
+The Structure Module (Algorithm 20 and Fig. 3d in the main article) maps the abstract representation of
+the protein structure (created by the Evoformer stack) to concrete 3D atom coordinates. Evoformer’s single
+representation is used as the initial single representation {sinitial
+} with sinitial
+∈ Rcs and Evoformer’s pair
+i
+i
+representation {zij } with zij ∈ Rcz and i, j ∈ {1, ..., Nres } biases the affinity maps in the attention operations.
+The module has 8 layers with shared weights. Each layer updates the abstract single representation {si } as
+well the concrete 3D representation (the “residue gas”) which is encoded as one backbone frame per residue
+{Ti }. We represent frames via a tuple Ti := (Ri , ~ti ). The tuple represents an Euclidean transform from the
+local frame to a global reference frame. I.e. it transforms a position in local coordinates ~xlocal ∈ R3 to a
+position in global coordinates ~xglobal ∈ R3 as
+~xglobal = Ti ◦ ~xlocal
+= Ri~xlocal + ~ti .
+
+(2)
+
+The backbone frames are initialized to an identity transform (Algorithm 20 line 4). We call this approach
+the ‘black hole initialization’. This initialization means that at the start of the Structure module all residues
+are located at the same point (the origin of the global frame) with the same orientation. One “layer” of the
+structure module is composed by the following operations: First, the abstract single representation is updated
+by the Invariant Point Attention (Algorithm 20 line 6) (see subsubsection 1.8.2 for details) and a transition
+layer. Then the abstract single representation is mapped to concrete update frames that are composed to the
+backbone frames (Algorithm 20 line 10). The composition of two Euclidean transforms is denoted as
+Tresult = T1 ◦ T2
+In the parameterization with a rotation matrix and translation vector this is:
+(Rresult , ~tresult ) = (R1 , ~t1 ) ◦ (R2 , ~t2 )
+= (R1 R2 , R1~t2 + ~t1 )
+To obtain all atom coordinates, we parameterize each residue by torsion angles. I.e., the torsion angles are
+the only degrees of freedom, while all bond angles and bond lengths are fully rigid. The individual atoms
+are identified by their names Satom names = {N, Cα , C, O, Cβ , Cγ , Cγ1 , Cγ2 , . . . }. The torsions are named as
+Storsion names = {ω, φ, ψ, χ1 , χ2 , χ3 , χ4 } We group the atoms according to their dependence on the torsion
+angles into “rigid groups” (Table 2). E.g., the position of atoms in the χ2 -group depend on χ1 and χ2 , but
+do not depend on χ3 or χ4 . We define a rigid group for every of the 3 backbone and 4 side chain torsion
+angles ω, φ, ψ, χ1 , χ2 , χ3 , χ4 , though with our construction of the backbone frames, no heavy atoms positions
+depend on the torsion angles ω or φ. The χ5 angle is not included, because it only appears in arginine and
+only slightly varies around 0 degrees. Atoms that just depend on the backbone frame are in the “backbone
+rigid group”, denoted as “bb”.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+24
+
+Table 2 Rigid groups for constructing all atoms from given torsion angles. Boxes highlight groups that are
+symmetric under 180◦ rotations.
+aatype
+
+bb
+
+ψ
+
+χ1
+
+χ2
+
+χ3
+
+χ4
+
+ALA
+ARG
+ASN
+
+β
+
+N, C , C, C
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+
+O
+O
+O
+
+Cγ
+Cγ
+
+Cδ
+Nδ2 , Oδ1
+
+N
+-
+
+Nη1 , Nη2 , Cζ
+-
+
+ASP
+CYS
+GLN
+
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+
+O
+O
+O
+
+Cγ
+Sγ
+Cγ
+
+Oδ1 , Oδ2
+Cδ
+
+N2 , O1
+
+-
+
+GLU
+GLY
+HIS
+ILE
+LEU
+LYS
+MET
+
+N, Cα , C, Cβ
+N, Cα , C
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+
+O
+O
+O
+O
+O
+O
+O
+
+Cγ
+Cγ
+Cγ1 , Cγ2
+Cγ
+Cγ
+Cγ
+
+Cδ
+Cδ2 , Nδ1 , C1 , N2
+Cδ1
+Cδ1 , Cδ2
+Cδ
+Sδ
+
+O1 , O2
+C
+C
+
+Nζ
+-
+
+PHE
+PRO
+SER
+THR
+TRP
+
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+
+O
+O
+O
+O
+O
+
+Cγ
+Cγ
+Oγ
+γ2
+C , Oγ1
+Cγ
+
+Cδ1 , Cδ2 , C1 , C2 , Cζ
+Cδ
+Cδ1 , Cδ2 , C2 , C3 , N1 , Cη2 , Cζ2 , Cζ3
+
+-
+
+-
+
+TYR
+VAL
+
+N, Cα , C, Cβ
+N, Cα , C, Cβ
+
+O
+O
+
+Cγ
+C , Cγ2
+
+Cδ1 , Cδ2 , C1 , C2 , Oη , Cζ
+-
+
+-
+
+-
+
+α
+
+γ1
+
+A shallow ResNet (Algorithm 20 line 11) predicts the torsion angles α
+~ if ∈ R2 . They get mapped to points on
+the unit circle via normalization whenever they are used as angles. Furthermore we introduce a small auxiliary
+loss (implemented in Algorithm 27) that encourages a unit norm of the raw vector to avoid degenerate values.
+In contrast to a [0, 2π] angle representation this representation has no discontinuity and can be directly used
+to construct rotation matrices without the need for trigonometric functions. The predicted torsion angles are
+converted to frames for the rigid groups of atoms (see subsubsection 1.8.4 for details).
+During training, the last step of each layer computes auxiliary losses for the current 3D structure (Algorithm 20 line 17). The intermediate FAPE loss operates only on the backbone frames and Cα atom positions to
+keep the computational costs low. For the same reason the side chain are here only supervised by their torsion
+angles. The 180◦ rotation symmetry of some rigid groups (highlighted by boxes in Table 2) is addressed by
+providing the alternative angle α
+~ ialt truth,f as well (see subsubsection 1.9.1 for details).
+We found it helpful to zero the gradients into the orientation component of the rigid bodies between iterations (Algorithm 20 line 20), so any iteration is optimized to find an optimal orientation for the structure in
+the current iteration, but is not concerned by having an orientation more suitable for the next iteration. Empirically, this improves the stability of training, presumably by removing the lever effects arising in a chained
+composition frames. After the 8 layers, the final backbone frames and torsion angles are mapped to frames
+for all rigid groups (backbone and side chain) Tif and all atom coordinates ~xai (Algorithm 20 line 24).
+During training, the predicted frames and atom coordinates are compared against the ground truth by the
+FAPE loss (Algorithm 20 line 28) that assesses all atom coordinates (backbone and side chain) relative to
+all rigid groups. The 180◦ -rotation-symmetries of a few rigid groups are handled by a globally consistent
+renaming of the ambiguous atoms in the ground truth structure (see subsubsection 1.8.5 for details).
+Finally the model predicts its confidence in form of a predicted lDDT-Cα score (pLDDT) per residue. This
+score is trained with the true per-residue lDDT-Cα score computed from the predicted structure and the ground
+truth. For details see subsubsection 1.9.6.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+Algorithm 20 Structure module
+
+def StructureModule {sinitial
+}, {zij }, Nlayer = 8, c = 128,
+i
+
+25
+
+sinitial
+∈ Rcs
+i
+
+
+{Titrue,f }, {Tialt truth,f }, {~
+αitrue,f }, {~
+αialt truth,f }, {~xtrue,a
+}, {~xialt truth,a } :
+i
+1:
+
+sinitial
+← LayerNorm(sinitial
+)
+i
+i
+
+2:
+
+zij ← LayerNorm(zij )
+si ∈ Rcs
+I ∈ R3×3 , ~0 ∈ R3
+
+si = Linear(sinitial
+)
+i
+4: Ti = (I, ~
+0)
+3:
+
+5:
+6:
+
+for all l ∈ [1, . . . , Nlayer ] do
+# shared weights
+{si } += InvariantPointAttention({si }, {zij }, {Ti })
+
+7:
+
+si ← LayerNorm(Dropout0.1 (si ))
+
+#
+
+Transition.
+
+8:
+
+si ← si + Linear(relu(Linear(relu(Linear(si )))))
+
+9:
+
+si ← LayerNorm(Dropout0.1 (si ))
+
+#
+
+Update backbone.
+
+10:
+
+#
+
+all intermediate activations ∈ Rcs
+
+Ti ← Ti ◦ BackboneUpdate(si )
+Predict side chain and backbone torsion angles ω, φ, ψ, χ1 , χ2 , χ3 , χ4
+ai ∈ Rc
+
+11:
+
+ai = Linear(si ) + Linear(sinitial
+)
+i
+
+12:
+
+ai ← ai + Linear(relu(Linear(relu(ai ))))
+
+all intermediate activations ∈ Rc
+
+13:
+
+ai ← ai + Linear(relu(Linear(relu(ai ))))
+
+all intermediate activations ∈ Rc
+
+14:
+
+α
+~ if = Linear(relu(ai ))
+
+#
+15:
+16:
+17:
+18:
+
+#
+
+Auxiliary losses in every iteration.
+(Ri , ~ti ) = Ti
+~
+~xCα
+i = ti
+
+true
+Llaux = computeFAPE({Ti }, {~xCα
+xtrue,Cα
+},  = 10−12 )
+i }, {Ti }, {~
+i
+
++ torsionAngleLoss({~
+αif }, {~
+αitrue,f }, {~
+αialt truth,f })
+No rotation gradients between iterations to stabilize training.
+
+20:
+
+if l < Nlayer then
+Ti ← (stopgrad(Ri ), ~ti )
+
+21:
+
+end if
+
+19:
+
+α
+~ if ∈ R2 , f ∈ Storsion names
+
+22:
+
+end for
+
+23:
+
+Laux = meanl ({Llaux })
+
+24:
+
+Tif , ~xai = computeAllAtomCoordinates(Ti , α
+~ if )
+
+25:
+
+Tif ← concat(Ti , Tif )
+
+a ∈ Satom names
+
+# Final loss on all atom coordinates.
+26:
+
+{Titrue,f }, {~xtrue,a
+} ← renameSymmetricGroundTruthAtoms(
+i
+{Tif }, {~xai }, {Titrue,f }, {Tialt truth,f }, {~xitrue,a }, {~xialt truth,a })
+
+27:
+28:
+
+LFAPE = computeFAPE({Tif }, {~xai }, {Titrue,f }, {~xtrue,a
+},  = 10−4 )
+i
+
+# Predict model confidence.
+29:
+
+{ritrue LDDT } = perResidueLDDT_Ca({~xai }, {~xtrue,a
+})
+i
+
+30:
+
+{ri
+
+31:
+
+return {~xai }, {ri
+
+pLDDT
+
+}, Lconf = predictPerResidueLDDT_Ca({si }, {ritrue LDDT })
+pLDDT
+
+}, LFAPE , Lconf , Laux
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+26
+
+1.8.1 Construction of frames from ground truth atom positions
+We construct frames using the position of three atoms from the ground truth PDB structures using a Gram–
+Schmidt process (Algorithm 21). Note that the translation vector ~t is assigned to the centre atom ~x2 . For
+backbone frames, we use N as ~x1 , Cα as ~x2 and C as ~x3 , so the frame has Cα at the centre. For the side chain
+frames, we use the atom before the torsion bond as ~x1 , the atom after the torsion bond as ~x2 and the next atom
+after that as ~x3 .
+Algorithm 21 Rigid from 3 points using the Gram–Schmidt process
+def rigidFrom3Points(~x1 , ~x2 , ~x3 ) :
+1:
+
+~v1 = ~x3 − ~x2
+
+2:
+
+~v2 = ~x1 − ~x2
+
+3:
+
+~e1 = ~v1 / ~v1
+
+4:
+
+
+
+~u2 = ~v2 − ~e1 ~e>1 ~v2
+
+5:
+
+~e2 = ~u2 / ~u2
+
+6:
+
+~e3 = ~e1 × ~e2
+
+R = concat(~e1 , ~e2 , ~e3 )
+8: ~t = ~
+x2
+9: return (R, ~t)
+
+7:
+
+~x1 , ~x2 , ~x3 ∈ R3
+
+R ∈ R3×3
+
+1.8.2 Invariant point attention (IPA)
+Invariant Point Attention (IPA) (Suppl. Fig. 8 and Algorithm 22) is a form of attention that acts on a set
+of frames (parametrized as Euclidean transforms Ti ) and is invariant under global Euclidean transformations
+Tglobal on said frames. We represent all the coordinates within IPA in nanometres; the choice of units affects
+the scaling of the point component of the attention affinities.
+To define the initial weightings for the different terms, we assume that all queries and keys come iid from
+a unit normal distribution N (0, 1) and compute the variances of the attention logits. Each scalar pair q, k
+2
+contributes Var[qk] = 1. Each point pair (~q, ~k) contributes Var[0.5 ~q − ~q>~k] = 9/2. The weighting
+factors wL and wC are computed such that all three terms contribute equally and that the resulting variance is
+1. The weight per head γ h ∈ R is the softplus of a learnable scalar.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+27
+
+attention
+weights
+(rq,rv,h)
+
+pair bias
+(rq,rv,h)
+
+Linear cz→h
+
+queries (rq,h,c)
+
+Linear cm→(h,c)
+
+dot-product
+affinities
+(rq,rv,h)
+
++
+
+softmax rv
+
+attention
+weights
+(rq,rv,h)
+
+output (rq,h,c)
+
+keys (rv,h,c)
+
+Linear cm→(h,c)
+
+single repr. (r,cm)
+
+Linear (h,cz)→cm
+
+values (rv,h,c)
+
+Linear cm→(h,c)
+
+attention
+weights
+(rq,rv,h)
+
+out pts. (rq,h,p',3)
+
+pair
+representation
+(r,r,cz)
+
+output (rq,h,cz)
+
+pair values
+(r,r,cz)
+
+Linear (h,c)→cm
+
++
+
+update (r,cm)
+
+Linear cm→(h,p,3)
+Linear cm→(h,p',3)
+
+key pts. (r,h,p,3)
+
+squared
+distance
+affinities
+(rq,rv,h)
+
+Linear (h,p',3)→cm
+
+coordinates in
+local frames
+
+key pts. (rv,h,p,3)
+
+value pts. (r,h,p',3)
+
+coordinates in
+local frames
+
+out pts. (r,h,p',3)
+
+query pts. (rq,h,p,3)
+
+Linear cm→(h,p,3)
+
+query pts. (r,h,p,3)
+
+gammas (h,)
+
+value pts. (rv,h,p',3)
+invert
+
+coordinates in the global frame
+
+backbone frames
+(r, 3x3) and (r,3)
+
+Supplementary Figure 8 Invariant Point Attention Module. (top, blue arrays) modulation by the pair representation. (middle, red arrays) standard attention on abstract features. (bottom, green arrays) Invariant
+point attention. Dimensions: r: residues, c: channels, h: heads, p: points.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+28
+
+Algorithm 22 Invariant point attention (IPA)
+def InvariantPointAttention({si }, {zij }, {Ti }, Nhead = 12, c = 16, Nquery points = 4, Npoint values = 8) :
+1:
+
+qhi , khi , vih = LinearNoBias(si )
+
+2:
+
+~ hp
+~qhp
+i , ki = LinearNoBias(si )
+
+3:
+
+~vihp = LinearNoBias(si )
+
+qhi , khi , vih ∈ Rc , h ∈ {1, . . . , Nhead }
+3
+~ hp
+~qhp
+i , ki , ∈ R , p ∈ {1, . . . , Nquery points }, units: nanometres
+
+bhij = LinearNoBias(zij )
+q
+2
+5: wC =
+9Nquery points ,
+q
+1
+6: wL =
+3
+
+> h
+h
+h
+7: aij = softmaxk wL √1c qh
+i kj + bij −
+
+~vihp ∈ R3 , p ∈ {1, . . . , Npoint values }, units: nanometres
+
+4:
+
+8:
+
+õhi =
+
+P
+
+ohi =
+
+P
+
+j
+
+γ h wC
+2
+
+P
+
+p
+
+Ti ◦ ~qhp
+i
+
+−
+
+Tj ◦ ~khp
+j
+
+2
+
+!
+
+ahij zij
+
+ahij vjh
+
+
+hp
+−1 P
+h T ◦~
+10: ~
+ohp
+=
+T
+◦
+a
+v
+j
+j ij
+i
+i
+j
+
+
+hp
+hp
+h
+h
+11: s̃i = Linear concath,p (õi , oi , ~
+oi , ~oi )
+9:
+
+12:
+
+j
+
+return {s̃i }
+
+The proof for invariance is straight-forward: The global transformation cancels out in the affinity computation (Algorithm 22 line 7), because the L2-norm of a vector is invariant under rigid transformations:
+
+
+
+
+
+Tglobal ◦ Ti ◦ ~qhp
+−
+T
+◦
+T
+◦ ~khp
+j
+global
+i
+j
+
+2
+
+
+
+~khp
+= Tglobal ◦ Ti ◦ ~qhp
+−
+T
+◦
+j
+i
+j
+~ hp
+= Ti ◦ ~qhp
+i − Tj ◦ kj
+
+2
+
+(3)
+
+2
+
+.
+
+(4)
+
+In the computation of the output points (Algorithm 22 line 10) it cancels out when mapping back to the local
+frame:
+
+
+
+−1 X
+
+
+
+X
+hp
+−1
+h
+Tglobal ◦ Ti
+◦
+aij
+Tglobal ◦ Tj ◦ ~vj
+= Ti−1 ◦ Tglobal
+◦ Tglobal ◦
+ahij Tj ◦ ~vjhp
+(5)
+j
+
+j
+
+= Ti−1 ◦
+
+X
+
+ahij
+
+
+
+Tj ◦ ~vjhp
+
+
+
+(6)
+
+j
+
+The invariance with respect to the global reference frame in turn implies that applying a shared rigid motion
+to all residues, while keeping the embeddings fixed, will lead to the same update in the local frames. Therefore,
+the updated structure will be transformed by the same shared rigid motion showing that this update rule is
+equivariant under rigid motions. Here and elsewhere, “rigid motion” includes proper rotation and translation
+but not reflection.
+1.8.3 Backbone update
+The updates for the backbone frames are created by predicting a quaternion for the rotation and a vector for the
+translation (Algorithm 23). The first component of the non-unit quaternion is fixed to 1. The three components
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+29
+
+defining the Euler axis are predicted by the network. This procedure guarantees a valid normalized quaternion
+and furthermore favours small rotations over large rotations (quaternion (1,0,0,0) is the identity rotation).
+Algorithm 23 Backbone update
+def BackboneUpdate(si ) :
+1: bi , ci , di , ~ti = Linear(si )
+
+bi , ci , di ∈ R, ~ti ∈ R3
+
+# Convert (non-unit) quaternion to rotation matrix.
+q
+2: (ai , bi , ci , di ) ← (1, bi , ci , di )/ 1 + b2i + c2i , +d2i
+
+
+a2i + b2i − c2i − d2i
+2bi ci − 2ai di
+2bi di + 2ai ci
+
+
+a2i − b2i + c2i − d2i
+2ci di − 2ai bi 
+3: Ri =  2bi ci + 2ai di
+2
+2
+2
+2
+2bi di − 2ai ci
+2ci di + 2ai bi
+ai − bi − ci + di
+4:
+
+Ti = (Ri , ~ti )
+
+5:
+
+return Ti
+
+1.8.4 Compute all atom coordinates
+The Structure Module predicts backbone frames Ti and torsion angles α
+~ if . The atom coordinates are then
+constructed by applying the torsion angles to the corresponding amino acid structure with idealized bond
+angles and bond lengths. We attach a local frame to each rigid group (see Table 2), such that the torsion axis
+is the x-axis, and store the ideal literature atom coordinates [97] for each amino acid relative to these frames
+in a table ~xlit
+r,f,a , where r ∈ {ALA, ARG, ASN, . . . } denotes the residue type, f ∈ Storsion names denotes the
+frame and a the atom name. We further pre-compute rigid transformations that transform atom coordinates
+lit
+from each frame to the frame that is higher up in the hierarchy. E.g. Tr,(χ
+maps atoms in amino-acid
+2 →χ1 )
+type r from the χ2 -frame to the χ1 -frame. As we are only predicting heavy atoms, the extra backbone rigid
+groups ω and φ do not contain atoms, but the corresponding frames contribute to the FAPE loss for alignment
+to the ground truth (like all other frames).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+30
+
+Algorithm 24 Compute all atom coordinates
+aatype
+
+def computeAllAtomCoordinates(Ti , α
+~ if , Fi
+ˆf
+1: ~
+α
+i
+2:
+
+=
+
+):
+
+α
+~ if /k~
+αif k
+
+ˆf
+~i, ψ
+~i , χ
+(~
+ωi , φ
+~ 1i , χ
+~ 2i , χ
+~ 3i , χ
+~ 4i ) = ~α
+i
+
+# Make extra backbone frames.
+aatype
+
+3:
+
+ri = Fi
+
+4:
+
+Ti1 = Ti ◦ Trliti ,(ω→bb) ◦ makeRotX(~
+ωi )
+
+5:
+
+~i)
+Ti2 = Ti ◦ Trliti ,(φ→bb) ◦ makeRotX(φ
+
+6:
+
+~i )
+Ti3 = Ti ◦ Trliti ,(ψ→bb) ◦ makeRotX(ψ
+
+# Make side chain frames (chain them up along the side chain).
+7:
+
+Ti4 = Ti ◦ Trliti ,(χ1 →bb) ◦ makeRotX(~
+χ1i )
+
+8:
+
+χ2i )
+Ti5 = Ti4 ◦ Trliti ,(χ2 →χ1 ) ◦ makeRotX(~
+
+9:
+
+Ti6 = Ti5 ◦ Trliti ,(χ3 →χ2 ) ◦ makeRotX(~
+χ3i )
+
+10:
+
+Ti7 = Ti6 ◦ Trliti ,(χ4 →χ3 ) ◦ makeRotX(~
+χ4i )
+
+# Map atom literature positions to the global frame.
+
+
+11: ~
+xai = concatf,a0 {Tif ◦ ~xlit
+}
+0
+ri ,f,a
+12:
+
+return Tif , ~xai
+
+Algorithm 25 Make a transformation that rotates around the x-axis
+def makeRotX(~
+α) :
+
+
+1 0
+0
+
+
+1: R = 0 α1 −α2 
+0 α2 α1
+ 
+0
+ 
+~
+2: t = 0
+0
+3:
+
+T = (R, ~t)
+
+4:
+
+return T
+
+α
+~ ∈ R2 with k~
+αk = 1
+
+1.8.5 Rename symmetric ground truth atoms
+The 180◦ -rotation-symmetry for some of the rigid groups (see Table 2) leads to naming ambiguities for the
+atoms in this group for all atoms that are not on the rotation axis (see Table 3).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+Table 3
+
+31
+
+Ambiguous atom names due to 180◦ -rotation-symmetry for some of the rigid groups
+aatype
+ASP
+GLU
+PHE
+TYR
+
+renaming swaps
+
+Cδ1
+Cδ1
+
+Oδ1 ↔ Oδ2
+O1 ↔ O2
+↔ Cδ2 , C1 ↔ C2
+↔ Cδ2 , C1 ↔ C2
+
+Algorithm 26 resolves the naming ambiguities in a globally consistent way by renaming the ground truth
+structure: For each residue, it computes the lDDT of the atoms against all non-ambiguous atoms for both possible namings (“true” and “alt truth”) of the ground truth atoms. The set of non-ambiguous atoms Snon-ambiguous atoms
+is the set of all (residue-type, atom-type) tuples from Table 2 minus the set of ambiguous atoms from Table 3.
+Subsequently the algorithm renames the ambiguous ground truth atoms such that they fit best to the predicted
+structure.
+Algorithm 26 Rename symmetric ground truth atoms
+truth,a
+def renameSymmetricGroundTruthAtoms({Tif }, {~xai }, {Titrue,f }, {Tialt truth,f }, {~xtrue,a
+}, {~xalt
+}) :
+i
+i
+
+1:
+
+d(i,a),(j,b) = ~xai − ~xbj
+
+∀(j, b) ∈ Snon-ambiguous atoms
+
+2:
+
+~ true,a − ~xtrue,b
+dtrue
+j
+(i,a),(j,b) = xi
+
+∀(j, b) ∈ Snon-ambiguous atoms
+
+3:
+
+truth
+~ alt truth,a − ~xtrue,b
+dalt
+j
+(i,a),(j,b) = xi
+
+∀(j, b) ∈ Snon-ambiguous atoms
+
+4:
+
+for all i ∈ [1 . .. Nres ] do
+
+5:
+6:
+7:
+8:
+9:
+10:
+
+if suma,(j,b)
+
+d(i,a),(j,b) −
+
+truth
+dalt
+(i,a),(j,b)
+
+
+
+
+< suma,(j,b)
+
+d(i,a),(j,b) −
+
+dtrue
+(i,a),(j,b)
+
+
+then
+
+truth,a
+~xtrue,a
+← ~xalt
+i
+i
+
+Titrue,f ← Tialt truth,f
+end if
+end for
+return {Titrue,f }, {~xtrue,a
+}
+i
+
+1.8.6 Amber relaxation
+In order to resolve any remaining structural violations and clashes [98], we relax our model predictions by
+an iterative restrained energy minimization procedure. At each round, we perform minimization of the AMBER99SB [99] force field with additional harmonic restraints that keep the system near its input structure.
+2
+The restraints are applied independently to heavy atoms, with a spring constant of 10 kcal/mol Å . Once the
+minimizer has converged, we determine which residues still contain violations. We then remove restraints
+from all atoms within these residues and perform restrained minimization once again, starting from the minimized structure of the previous iteration. This process is repeated until all violations are resolved. In the
+CASP14 assessment we used a single iteration; targets with unresolved violations were re-run.
+Full energy minimization and hydrogen placement was performed using the OpenMM simulation package [100]. The minimization procedure was run with a tolerance of 2.39 kcal/mol and an unbounded maximum number of steps, which are OpenMM’s default values.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+32
+
+1.9 Loss functions and auxiliary heads
+The network is trained end-to-end, with gradients coming from the main Frame Aligned Point Error (FAPE)
+loss LFAPE and a number of auxiliary losses. The total per-example loss can be defined as follows
+
+0.5L
+training
+FAPE + 0.5Laux + 0.3Ldist + 2.0Lmsa + 0.01Lconf
+L=
+,
+0.5LFAPE + 0.5Laux + 0.3Ldist + 2.0Lmsa + 0.01Lconf + 0.01Lexp resolved + 1.0Lviol fine-tuning
+(7)
+where Laux is the auxiliary loss from the Structure Module (averaged FAPE and torsion losses on the intermediate structures, defined in Algorithm 20 line 23), Ldist is an averaged cross-entropy loss for distogram
+prediction, Lmsa is an averaged cross-entropy loss for masked MSA prediction, Lconf is the model confidence
+loss defined in subsubsection 1.9.6, Lexp resolved is the “experimentally resolved” loss defined in subsubsection 1.9.10, and Lviol is the violation loss defined in subsubsection 1.9.11. The last two losses are only used
+during fine-tuning.
+To decrease the relative importance of short sequences, we multiply the final loss of each training example
+by the square root of the number of residues after cropping. This implies equal weighting for all proteins that
+are longer than the crop size, and a square-root penalty for the shorter ones.
+The purpose of the FAPE, aux, distogram, and MSA losses is to attach an individual loss to each major
+subcomponent of the model (including both the pair and MSA final embeddings) as a guide during the training
+of the “purpose” of each unit. The FAPE and aux are direct structural terms for the Structure module. The
+distogram loss assures that all entries in the pair representation have a clear relationship to the associated ij
+residue pair and to make sure that the pair representation will be useful for the structure module (ablations
+show that this is only a minor effect however). The distogram is also a distributional prediction, such that
+it is a method by which we interpret the model’s confidence in interdomain interactions. The MSA loss
+is intended to force the network to consider inter-sequence or phylogenetic relationships to complete the
+BERT task, which we intend as a way to encourage the model to consider co-evolution-like relationships
+without explicitly encoding covariance statistics (this is the intention but we only observe the outcome that
+it increases model accuracy). The very small confidence loss allows the construction of the pLDDT value
+without compromising the accuracy of the structures themselves – we had previously fine-tuned this loss after
+training but it is just as accurate to train from the beginning with a small loss. Finally, the “violation” losses
+encourage the model to produce a physically plausible structure with correct bond geometry and avoidance of
+clashes, even in cases where the model is highly unsure of the structure. This avoids rare failures or accuracy
+loss in the final AMBER relaxation. Using the violation losses early in training causes a small drop in final
+accuracy since the model overly optimizes for the avoidance of clashes, so we only use this during fine-tuning.
+The various loss weights were hand-selected and only lightly-tuned over the course of AlphaFold development (typically a couple of values for the coefficient of each loss was tried when the loss term was introduced
+and the weights rarely adjusted after that). We did some tuning early in model development on the ratio of
+FAPE, distogram, and MSA losses, but did not re-tune much as the model developed. It is possible that automated or more extensive tuning of these weights could improve accuracy, but we have generally not observed
+strong sensitivity to the precise values that would motivate us to do so.
+Below we provide details of the individual losses and transformations that are applied to the Evoformer
+output representations to obtain auxiliary predictions.
+1.9.1 Side chain and backbone torsion angle loss
+ˆf ∈
+The predicted side chain and backbone torsion angles are represented as points on the unit circle, i.e., ~α
+i
+true,f
+2 , which is
+ˆ f k = 1. They are compared to the true torsion angles α
+R2 with k~α
+~
+with
+an
+L2
+loss
+in
+R
+i
+i
+mathematically equivalent to the cosine of the angle difference (see below).
+Some side chains parts are 180◦ -rotation-symmetric (see Table 2), such that the predicted torsion angle χ
+and χ + π result in the same physical structure (just the internal atom names are exchanged). We allow the
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+33
+
+network to produce either of these torsion angles by providing the alternative angle as α
+~ ialt truth,f = α
+~ itrue,f + π.
+For all non-symmetric configurations we set α
+~ ialt truth,f = α
+~ itrue,f .
+We also introduce a small auxiliary loss Langlenorm that keeps the predicted points close to the unit circle.
+There are two reasons for this: One is to avoid vectors too close to the origin, which can lead to numerically
+unstable gradients. The other is that while the norm of the vector does not influence the output it does influence
+the learning dynamics of the network. When looking at how the gradients transform in the backward pass of
+the normalization the gradients will get rescaled by the norm of the unnormalized vector.
+Given that the model is highly nonlinear the length of these vectors can change strongly during training,
+leading to undesirable learning dynamics. The weighting factor was selected on an ad hoc basis, testing a few
+values and picking the lowest one that keeps the norm of the vectors stable. We have not observed any strong
+dependence on the precise value in terms of model performance.
+Algorithm 27 Side chain and backbone torsion angle loss
+def torsionAngleLoss({~
+αif }, {~
+αitrue,f }, {~
+αialt truth,f }) :
+1:
+
+`fi = k~
+αif k
+
+2:
+
+ˆf = α
+~α
+~ if /`fi
+i
+
+3:
+
+ˆf − α
+ˆf − α
+Ltorsion = meani,f (minimum(k~α
+~ itrue,f k2 , k~α
+~ ialt truth,f k2 ))
+i
+i
+
+4:
+
+Langlenorm = meani,f ({|`fi − 1|})
+
+5:
+
+return Ltorsion + 0.02Langlenorm
+
+The comparison of two angles (α and β) represented as points on the unit circle by an L2 norm is mathematically equivalent to the cosine of the angle difference:
+cos(α − β) = cos α · cos β + sin α · sin β
+
+> 
+
+α
+cos β
+= cos
+sin α
+sin β
+
+
+cos α
+sin α
+
+
+
+−
+
+
+
+cos β
+sin β
+
+
+
+2
+
+=
+
+
+
+cos α
+sin α
+
+
+
+2
+
++
+
+
+
+cos β
+sin β
+
+
+
+2
+
+−2
+
+(8)
+
+
+cos α
+sin α
+
+> 
+
+cos β
+sin β
+
+
+
+
+> 
+
+α
+cos β
+= 2 − 2 cos
+sin α
+sin β
+= 2 − 2 cos(α − β),
+
+(9)
+
+where the first identity is just the normal cosine difference formula.
+1.9.2 Frame aligned point error (FAPE)
+The Frame Aligned Point Error (FAPE) (see Algorithm 28, and Fig. 3f with its corresponding section in
+the main article) scores a set of predicted atom coordinates {~xj } under a set of predicted local frames {Ti }
+true
+against the corresponding ground truth atom coordinates {~xtrue
+j } and ground truth local frames {Ti }. The
+final FAPE loss (Algorithm 20 line 28) scores all atoms in all backbone and side chain frames. Additionally a
+cheaper version (scoring only all Cα atoms in all backbone frames) is used as an auxiliary loss in every layer
+of the Structure Module (Algorithm 20 line 17).
+In order to formulate the loss we compute the atom position ~xj relative to frame Ti (Algorithm 28 line 1)
+and the location of the corresponding true atom position ~xtrue
+relative to the true frame Titrue (Algorithm 28
+j
+line 2). The deviation is computed as a robust L2 norm (Algorithm 28 line 3) ( is a small constant added
+to ensure that gradients are numerically well behaved for small differences. The exact value of this constant
+does not matter, as long as it is small enough. We used values of 10−4 and 10−12 in our experiments.). The
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+34
+
+resulting Nframes × Natoms deviations are penalized with a clamped L1-loss (Algorithm 28 line 4) with a length
+scale Z = 10 Å to make the loss unitless.
+In this section, we represent the point positions and the hyperparameters in Å, although the loss is invariant
+to the choice of units.
+We now discuss the behaviour of the loss under global rigid transformations of both the true and the predicted structure. Firstly we should note that ~xij is invariant under rigid motions (not including reflection); as
+such if the predicted structure differs from the ground truth by an arbitrary rotation and translation the loss
+will stay constant. However, the loss is not invariant under reflections due to the way the local frames are
+constructed, as the z-axis of the local frames transforms as a pseudo-vector. Furthermore, we can see that the
+error is invariant when applying the same rigid motion to both target frames and predicted frames. This implies that the way frames are constructed from the structure is not constrained to the precise choice we made,
+but can differ as long as they are constructed in a consistent manner between predicted and target structure.
+Algorithm 28 Compute the Frame aligned point error
+2
+
+−4
+def computeFAPE({Ti }, {~xj }, {Titrue }, {~xtrue
+j }, Z = 10Å, dclamp = 10Å,  = 10 Å ) :
+Ti , Titrue ∈ (R3×3 , R3 )
+~xj , ~xtrue
+∈ R3 ,
+j
+i ∈ {1, ..., Nframes }, j ∈ {1, ..., Natoms }
+
+1:
+
+~xij = Ti−1 ◦ ~xj
+
+~xij ∈ R3
+
+true −1 ◦ ~
+~xtrue
+xtrue
+ij = Ti
+j
+q
+2
+k~xij − ~xtrue
+3: dij =
+ij k + 
+
+3
+~xtrue
+ij ∈ R
+
+2:
+
+1
+Z
+
+4:
+
+LFAPE =
+
+5:
+
+return LFAPE
+
+dij ∈ R
+
+meani,j (minimum(dclamp , dij ))
+
+1.9.3 Chiral properties of AlphaFold and its loss
+In this section we will look in detail at the transformation properties of the various components under global
+reflections
+reflection
+~xi 7→ −~xi
+(10)
+Under this global reflection, the coordinates of the frames also change in a non-trivial way (use Algorithm 21
+with negated positions). Simple algebra shows that
+!
+
+
+−1 0 0
+reflection
+0 −1 0 , −~
+Ti = (Ri , ~ti ) 7→
+Ri
+ti ,
+(11)
+0
+
+0
+
+1
+
+where the non-trivial transformation of the rotation matrix Ri arises from the cross-product in Algorithm 21.
+The non-trivial transformation of the rotation matrix also means that the local points Ti−1 ◦~xj are not invariant
+under reflection,
+Ti−1 ◦ ~xj = Ri−1 (~xj − ~ti )
+
+
+−1 0 0
+reflection
+0
+−1
+0
+7→
+Ri−1 (−~xj + ~ti )
+0 0 1
+
+
+1 0 0
+= 0 1 0 Ri−1 (~xj − ~ti )
+0 0 −1
+
+
+
+1 0 0
+= 0 1 0
+Ti−1 ◦ ~xj .
+0
+
+0 −1
+
+(12)
+(13)
+(14)
+(15)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+35
+
+The effect of a global reflection is to reflect only the z-component of the local coordinates Ti−1 ◦~xj .
+
+
+
+In the following we denote a set of frames and points by large Roman letters, for example X = ~xi , Tj .
+In particular, this means that both FAPE and IPA can distinguish global reflections of the protein assuming
+that the rigid frames are related to the underlying points by Algorithm 21, e.g.
+
+
+
+X
+1 0 0  −1
+−1
+FAPE(X, Xreflection ) =
+Ti ◦ ~xj − 0 1 0
+Ti ◦ ~xj
+(16)
+0
+
+ij
+
+=2
+
+X
+
+(Ti−1 ◦ ~xj )z ,
+
+0 −1
+
+(17)
+
+ij
+
+which is a large positive value outside of degenerate cases. For a more general proof that FAPE can distinguish
+chirality regardless of how the frames are constructed, see the next section.
+There are other sources of chirality in AlphaFold. The atom positions are computed from a combination
+of the backbone frames and the predicted χ angles, and this procedure will always generate a left-handed
+molecule since it uses ideal values outside of the χ angles (i.e. the CB will always be in the left-handed
+location). AlphaFold can produce almost exactly the chiral pair for the backbone atoms, but it cannot build
+the chiral pair of the side chains. The model also has a small loss on the χ-angle values and those values are
+not invariant under reflection.
+In order to test the importance of the chirality of FAPE we trained a model using the dRMSD loss [101]
+instead of FAPE, we show the results on the CASP14 set in Figure 9. Here we can see that the lDDT-Cα
+performance is still good, where we note that lDDT-Cα is a metric that cannot distinguish molecules of the
+opposite chirality.
+However GDT shows a bimodal distribution if trained with a dRMSD loss, where one of the two modes
+is only somewhat worse than baseline AlphaFold and the other mode has very low accuracy (Suppl. Fig. 9).
+This suggests that the second mode composes molecules of reverse chirality. To test this we compute GDT ,
+which is the GDT of the mirror reflection of the structure used to compute GDT. These mirror structures
+also show bimodality of the GDT values. Finally taking the maximum over the GDT of the structure and its
+mirror produces consistently high GDT. This confirms that AlphaFold trained with a dRMSD loss frequently
+produces mirror structures, and that FAPE is the main component that ensures the correct chirality of predicted
+structures.
+1.9.4 Configurations with FAPE(X,Y) = 0
+To understand the points at which zero FAPE loss is achieved, we will introduce an RMSD-like auxiliary
+measure that operates only on points and not frames
+1 X
+~xj − T align ◦ ~yj
+S({~xi }, {~yi }) =
+min
+(18)
+T align ∈SE(3) Npoint
+j
+
+where T is a proper rigid transformation. Then we can show a lower bound of FAPE irrespective of the values
+of the frames,
+X
+1
+Ti−1 ◦ ~xj − T̃i−1 ◦ ~x̃j
+(19)
+FAPE(X, X̃) =
+Nframes Npoint
+ij
+
+
+1 X 1 X
+~xj − (Ti ◦ T̃i−1 ) ◦ ~x̃j 
+=
+(20)
+Nframes
+Npoint
+i
+
+≥
+
+1
+
+X
+
+Nframes
+
+i
+
+j
+
+S({~xj }, {~x̃j })
+
+= S({~xj }, {~x̃j }),
+
+(21)
+(22)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+36
+
+Supplementary Figure 9 Accuracy distribution of a model trained with dRMSD instead of the FAPE loss
+(N = 87 protein domains). Here GDT denotes the GDT score obtained when comparing to the chirally
+reflected target structure.
+
+since the S function minimizes the quantity in parentheses over all proper rigid transformations and Ti T̃i−1
+is a proper rigid transformation. This inequality simply shows that the point errors averaged over all local
+frames are no less than the point error for the best single global alignment under the same distance function.
+The value S({~xi }, {~x̃i }) is zero iff RMSD({~xi }, {~x̃i }) = 0, which shows that FAPE(X, X̃) = 0 is only
+possible if the points have RMSD({~xi }, {~yi }) = 0. We can characterize all pairs such that FAPE(X, X̃) = 0
+as those where RMSD({~xi }, {~x̃i }) = 0 and Ti−1 ◦ T̃i is one of rigid motions that achieves this zero RMSD
+(which is unique unless the point sets are degenerate). In particular, the FAPE loss always has non-zero values
+chiral pairs if the point sets are non-degenerate, regardless of the how the frames are constructed.
+1.9.5 Metric properties of FAPE
+In this section, we show that idealized FAPE (i.e. using  = 0) has all the properties of a pseudometric, which
+is a generalized distance function used in topology. To reduce clutter, the proofs are shown without a cutoff but
+hold equally well when k·k is treated as a clipped vector norm. The reader uninterested in the mathematical
+details may skip this section.
+It is simple to show from the defining equation that
+FAPE(X, Y ) ≥ 0
+
+(23)
+
+FAPE(X, X) = 0
+
+(24)
+
+FAPE(X, Y ) = FAPE(Y, X),
+
+(25)
+
+so the only remaining pseudometric property to prove is the triangle inequality, FAPE(X, Z) ≤ FAPE(X, Y )+
+FAPE(Y, Z). The triangle inequality is proven below, using tildes and overbars to designate the different con-
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+37
+
+figurations.
+FAPE(X, X̃) =
+
+X
+
+Ti−1 ◦ ~xj − T̃i−1 ◦ ~x̃j
+
+(26)
+
+Ti−1 ◦ ~xj − T̄i−1 ◦ ~x̄j + T̄i−1 ◦ ~x̄j − T̃i−1 ◦ ~x̃j
+
+(27)
+
+i,j
+
+=
+
+X
+i,j
+
+≤
+
+X
+
+Ti−1
+
+◦ ~xj −
+
+T̄i−1
+
+◦ ~x̄j + T̄i−1 ◦ ~x̄j − T̃i−1 ◦ ~x̃j
+
+
+(28)
+
+i,j
+
+=
+
+X
+
+Ti−1 ◦ ~xj − T̄i−1 ◦ ~x̄j +
+
+X
+
+i,j
+
+T̄i−1 ◦ ~x̄j − T̃i−1 ◦ ~x̃j
+
+(29)
+
+i,j
+
+= FAPE(X, X̄) + FAPE(X̄, X̃).
+
+(30)
+
+1.9.6 Model confidence prediction (pLDDT)
+Our model provides intrinsic model accuracy estimates by predicting the per-residue lDDT-Cα [98] scores.
+We call this confidence measure pLDDT. Algorithm 29 computes it by taking the final single representation
+from the structure module (Algorithm 20 line 30), and projecting it into 50 bins (each bin covering a 2 lDDTCα range).
+For training, we score the final predicted structure with per-residue lDDT-Cα against the ground truth
+structure. This score is discretized into 50 bins and used as the target value for the cross-entropy loss Lconf
+averaged over the residues. Additionally, we only train on the examples with resolution between 0.1 Å and
+3.0 Å, and ignoring any NMR structure, to ensure high-quality ground truth data.
+For evaluation, we compute the expected value of the per-residue pLDDT distribution (Algorithm 29 line 5).
+The chain pLDDT is obtained as an average of the per-residue pLDDT scores within the chain.
+Algorithm 29 Predict model confidence pLDDT
+def predictPerResidueLDDT_Ca({si }, vbins = [1, 3, 5, . . . , 99]> , {ritrue LDDT }, c = 128) :
+1:
+
+ai = relu(Linear(relu(Linear(LayerNorm(si )))))
+
+2:
+
+pi
+
+3:
+
+LDDT = one_hot(r true LDDT , v
+ptrue
+bins )
+i
+i
+
+4:
+
+LDDT log p
+Lconf = meani (ptrue
+i
+i
+
+5:
+
+ri
+
+6:
+
+pLDDT
+
+pLDDT
+
+return
+
+pLDDT
+
+= softmax(Linear(ai ))
+>
+
+pLDDT>
+
+= pi
+
+vbins
+
+ai , and intermediate activations ∈ Rc
+pi
+
+pLDDT
+
+∈ R|vbins |
+
+)
+pLDDT
+
+ri
+
+∈R
+
+pLDDT
+{ri
+}, Lconf
+
+1.9.7 TM-score prediction
+The pLDDT head above predicts the value of lDDT-Cα, which is a local error metric that operates pairwise
+but by design is not sensitive to what fraction of the residues can be aligned using a single global rotation
+and translation. This can be disadvantageous for assessing whether the model is confident in its overall
+domain packing for large chains. In this section we develop a predictor of the global superposition metric
+TM-score [102].
+true
+We denote the ground truth structure’s Cα atoms X true = {~xtrue
+j }, its backbone frames {Ti }, the predicted
+structure’s Cα atoms via X = {~xj }, and the corresponding backbone frames {Ti }. Let the number of residues
+be Nres , and assume all residues are resolved in the ground truth. Denoting T align = (Ralign , ~talign ) an arbitrary
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+38
+
+rigid transformation, the TM-score is defined as
+TM(X, X
+
+true
+
+Nres 
+
+1 X
+) = max
+f k~xj − T align ◦ ~xtrue
+k ,
+j
+T align ∈SE(3) Nres
+
+(31)
+
+j=1
+
+1
+
+f (d) =
+1+
+
+
+
+d
+d0 (Nres )
+
+2 ,
+
+p
+d0 (Nres ) = 1.24 3 maximum(Nres , 19) − 15 − 1.8
+
+(32)
+(33)
+
+In the last equation, Nres is clipped to avoid negative or undefined values for very short proteins. In practice,
+global optimisation over T align is infeasible, so computational methods rely on approximations, e.g. TMalign [103] uses an iterative procedure of choosing a best-fit alignment on a subset of residues and then
+re-computing this set of residues.
+We now develop an approximation to the TM-score that relies on a pairwise accuracy measure which can
+be predicted from a pair representation. Crucially, this approximation allows prediction of the TM-score for
+an arbitrary subset of residues (such as a domain) without rerunning the structure prediction.
+
+1 X 
+TM(X, X true ) = max
+f k~xj − T align ◦ ~xtrue
+k
+(34)
+j
+T align ∈SE(3) Nres
+j
+
+1 X 
+−1
+≥ max
+k
+(35)
+f k~xj − (Ti Titrue ) ◦ ~xtrue
+j
+i∈[1,...,Nres ] Nres
+j
+
+1 X  −1
+−1
+= max
+f kTi ◦ ~xj − Titrue ◦ ~xtrue
+(36)
+j k .
+i Nres
+j
+
+Above, we replace the continuous maximum over all possible alignments with a discrete maximum set of
+Nres single-residue alignments (Ti Titrue −1 ). This clearly lower-bounds the original maximum, with the bound
+becoming tight when the global superposition exactly aligns the backbone of any residue. Then, we symmetrize the vector difference by applying the rigid transformation Ti . Note that the expression in Equation 36
+is closely related to FAPE, except that the f function is somewhat different and FAPE has a mean instead of
+maximum (i.e. FAPE considers all 1-residue alignments instead of only the best one).
+Next, we assume that the correct structure X true is unknown and that we have a distribution of probable
+structures for which we seek the expected value of the TM-score for our prediction X:
+
+
+h
+i
+
+
+X
+1
+−1
+
+E TM(X, X true ) ≥ E max
+f kTi−1 ◦ ~xj − Titrue ◦ ~xtrue
+(37)
+j k
+i Nres
+j
+ 
+
+1 X
+−1
+true −1
+true
+≥ max
+E f kTi ◦ ~xj − Ti
+◦ ~xj k .
+(38)
+i Nres
+j
+
+In the final line, we replace the expectation-of-maximum with a maximum-of-expectation (a lower bound due
+to Jensen’s inequality), and use the linearity of expectation.
+The pairwise matrix eij = kTi−1 ◦ ~xj − Titrue −1 ◦ ~xtrue
+j k is a non-symmetric matrix that captures the error in
+the position of the Cα atom of residue j when the predicted and true structures are aligned using the backbone
+frame of residue i. The probability distribution of its elements can be readily predicted by a neural network.
+To do that, we discretize the distribution of eij into 64 bins, covering the range from 0 to 31.5 Å with 0.5 Å
+bin width. During training, the final bin also captures any larger errors. We compute eij as a linear projection
+of the pair representation zij , followed by a softmax. We fine-tune the CASP models to additionally predict
+eij using the average categorical cross-entropy loss, with weight 0.1 (weights 0.01 and 1.0 were also tried
+but those weights lowered either pTM accuracy or structure prediction accuracy, respectively). Just as for
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+39
+
+the pLDDT prediction, we only train this prediction module on non-NMR examples with resolution between
+0.1 Å and 3.0 Å. The fine-tuning took roughly 16 hours and processed 3 · 105 samples.
+Using eij , we approximate the TM-score as
+pTM = max
+i
+
+
+1 X 
+E f (eij ) ,
+Nres
+
+(39)
+
+j
+
+where the expectation is taken over the probability distribution defined by eij . We find that pTM is a pessimistic predictor of the true TM-score, which is as expected, given that both approximations used in the
+derivation of pTM are lower bounds.
+Note that given a full-chain prediction of eij , we can obtain a TM-score prediction for any subset of residues
+D (such as a particular domain) simply by restricting the range of residues considered:
+pTM(D) = max
+i∈D
+
+1 X
+E
+|D|
+j∈D
+
+1
+
+1+
+
+
+
+2 ,
+eij
+d0 (|D|)
+
+(40)
+
+where |D| is the number of residues in the set D. By small modifications, a similar expression could be derived
+to estimate GDT, FAPE, or RMSD from the eij matrix, though we do not pursue this further. Additionally,
+the 2-D image of the expected values of f (eij ) serves as a good visualization of confident domain packings
+within the structure.
+1.9.8 Distogram prediction
+We linearly project the symmetrized pair representations (zij + zji ) into 64 distance bins and obtain the bin
+probabilities pbij with a softmax. The bins cover the range from 2 Å to 22 Å; and they have equal width apart
+b we use one-hot
+from the last bin, which also includes any more distant residue pairs. For prediction targets yij
+encoded binned residue distances, which are computed from the ground-truth beta carbon positions for all
+amino acids except glycine where use alpha carbon instead. We use the cross-entropy loss averaged over all
+residue pairs:
+64
+1 XX b
+Ldist = − 2
+yij log pbij .
+(41)
+Nres
+i,j b=1
+
+1.9.9 Masked MSA prediction
+Similarly to the common masked language modelling objectives [104], we use the final MSA representations
+to reconstruct MSA values that have been previously masked out (see subsubsection 1.2.7). We consider 23
+classes, which include 20 common amino acid types, an unknown type, a gap token, and a mask token. MSA
+representations {msi } are linearly projected into the output classes, passed through a softmax, and scored
+with the cross-entropy loss:
+23
+X X
+1
+c
+Lmsa = −
+ysi
+log pcsi ,
+(42)
+Nmask
+s,i∈mask c=1
+
+pcsi
+
+where
+are predicted class probabilities,
+pens over the masked positions.
+
+c
+ysi
+
+are one-hot encoded ground-truth values, and averaging hap-
+
+1.9.10 “Experimentally resolved” prediction
+The model contains a head that predicts if an atom is experimentally resolved in a high-resolution structure.
+The input for this head is the single representation {si } produced by the Evoformer stack (subsection 1.6). The
+exp resolved,a
+single representation is projected with a Linear layer and a sigmoid to atom-wise probabilities {pi
+}
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+40
+
+with i ∈ [1, . . . , Nres ] and a ∈ Satom names . We train this head during fine-tuning (see subsubsection 1.12.1) on
+high-resolution X-ray crystals and cryo-EM structures (resolution better than 3Å) with standard cross-entropy,
+
+
+exp resolved,a
+exp resolved,a
+Lexp resolved = mean(i,a) −yia log pi
+− (1 − yia ) log(1 − pi
+) ,
+(43)
+where yia ∈ {0, 1} denotes the ground truth, i.e. if atom a in residue i was resolved in the experiment.
+1.9.11 Structural violations
+The construction of the atom coordinates from independent backbone frames and torsion-angles (Fig. 3e),
+subsubsection 1.8.4) produces idealized bond lengths and bond angles for most of the atom bonds, but the
+geometry for inter-residue bonds (peptide bonds) and the avoidance of atom clashes need to be learned. We
+introduce extra losses that penalize these structural violations to ensure these constraints everywhere, i.e. also
+in regions where no ground truth atom coordinates are available. We constructed the losses in a way that
+loss-free structures will pass the stereochemical quality checks in the lDDT metric [98].
+The losses use a flat-bottom L1 loss that penalizes violations above a certain tolerance threshold τ . The
+bond length violation loss is computed as
+Lbondlength =
+
+1
+
+NX
+bonds
+
+Nbonds
+
+i=1
+
+
+
+i
+− `liti | − τ, 0 ,
+max |`pred
+
+(44)
+
+i
+where `pred
+is a bond length in the predicted structure and `liti is the literature value [97] for this bond length.
+Nbonds is the number of all bonds in this structure. We set the tolerance τ to 12σlit , where σlit is the literature
+standard deviation of this bond length. We chose the factor 12 to ensure that the produced bond lengths pass
+the stereochemical quality checks lDDT metric [98], which also uses by default a tolerance factor of 12.
+The bond angle violation loss uses the cosine of the angle computed from the dot-product of the unit vectors
+ˆ >~v
+ˆ
+of the bonds, cos α = ~v
+1 2 and also applies a flat-bottom L1 loss on the deviations:
+
+Lbondangle =
+
+Nangles
+
+1
+
+X
+
+Nangles
+
+
+
+i
+max |cos αpred
+− cos αliti | − τ, 0
+
+(45)
+
+i=1
+
+i
+where αpred
+is a bond angle in the predicted structure and αliti is the literature value for this bond angle. Nangles
+is the number of all bond angles in this structure. The tolerance τ is computed such that the flat bottom extends
+from -12 to 12 times the literature standard deviation of this bond angle.
+The clash loss uses a one-sided flat-bottom-potential, that penalizes too short distances only,
+Nnbpairs
+
+Lclash =
+
+X
+
+
+
+i
+max dliti − τ − dpred
+, 0 ,
+
+(46)
+
+i=1
+i
+where dpred
+is the distance of two non-bonded atoms in the predicted structure and dliti is the “clashing distance”
+of these two atoms according to their literature Van der Waals radii. Nnbpair is the number of all non-bonded
+atom pairs in this structure. The tolerance τ is set to 1.5 Å.
+All these losses together build the violation loss
+
+Lviol = Lbondlength + Lbondangle + Lclash .
+
+(47)
+
+We apply this violation loss only during the fine-tuning training phase. Switching it on in the early training
+leads to strong instabilities in the training dynamics.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+41
+
+1.10 Recycling iterations
+We find it helpful to execute the network multiple times, each time embedding the previous outputs as additional inputs. We call this technique “recycling”, and we find it relatively important in the ablation studies
+(subsection 1.13). In this section we first explain how recycling operates in general, both at training and the
+inference time. Then, we describe the specific features being recycled in the AlphaFold model. Algorithm 2
+shows the full inference of AlphaFold with recycling and ensembling (MSA resampling and ensembling is
+further explained in subsubsection 1.11.2).
+Algorithm 30 Generic recycling inference procedure
+
+def RecyclingInference( inputsc , Ncycle ) :
+1:
+
+outputs = 0
+
+# Recycling iterations
+for all c ∈ [1, . . . , Ncycle ] do
+# shared weights
+3:
+outputs ← Model(inputsc , outputs)
+
+2:
+
+4:
+
+end for
+
+5:
+
+return outputs
+
+Algorithm 31 Generic recycling training procedure
+
+def RecyclingTraining( inputsc , Ncycle ) :
+1:
+
+N 0 = uniform(1, Ncycle )
+
+2:
+
+outputs = 0
+
+# shared value across the batch
+
+# Recycling iterations
+for all c ∈ [1, . . . , N 0 ] do
+# shared weights
+4:
+outputs ← stopgrad(outputs)
+# no gradients between iterations
+3:
+
+5:
+
+outputs ← Model(inputsc , outputs)
+
+6:
+
+end for
+
+7:
+
+return loss(outputs)
+
+# only the final iteration’s outputs are used
+
+Recycling allows to make the network deeper and to process multiple versions of the input features (e.g. incorporate the MSA resampling) without significantly increasing the training time or the number of parameters.
+At the inference time, recycling yields a recurrent network with shared weights, where each iteration c takes
+in the input features inputsc and the previous iteration’s outputs, and produces the new refined outputs, see
+Algorithm 30. The initial “outputs” are constant zeros, since we find that networks can easily accommodate
+this special case. We will denote the number of iterations of this network via Ncycle . We use Ncycle = 4 in
+AlphaFold.
+While it is possible to train recycling by simply unrolling the Ncycle iterations, the computational and memory cost of that may be prohibitive. Instead, we introduce an approximate training scheme, which empirically
+works well and significantly reduces the extra cost of recycling during training, Algorithm 31. We first define
+an objective, the average loss of the model over all iterations:
+1
+Ncycle
+
+Ncycle
+
+X
+c=1
+
+loss(outputsc )
+
+(48)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+42
+
+where outputsi are the model’s outputs at iteration c. Next, we construct an unbiased Monte Carlo estimate of
+this objective by uniformly sampling the number of iterations N 0 between 1 an Ncycle , and only train the loss
+for that step. This means that any following iterations can be skipped. The random choice of the number of
+iterations N 0 is synchronized across the batch (i.e. every batch element trains the same iteration on each step)
+to increase efficiency. Finally, we stop the gradients flowing from the chosen iteration to the previous ones,
+allowing to skip the backward pass (backpropagation) for the previous iterations c < N 0 . As an example, if
+we sampled N 0 = 3, and Ncycle = 4, then we perform just the forward pass for the first two iterations; both
+the forward and the backward pass for the third iteration; and the fourth iteration is completely skipped.
+We now explain the motivation behind this procedure, compared to simple unrolling. Randomly sampling
+Ncycle +1
+1 PNcycle
+the iteration N 0 improves the efficiency, since we now perform Ncycle
+iterations on average
+c=1 c =
+2
+instead of Ncycle . Importantly, it also acts as auxiliary loss for the model, requiring to provide plausible outputs
+mid-way through the inference. We hypothesize that this allows the network to refine its own predictions
+multiple times. Stopping the gradients of the intermediate outputs makes the procedure much cheaper, both
+memory-wise and computationally. Memory-wise, it allows to eschew storing the intermediate activations
+of the previous iterations. Computationally, this procedure requires a single backward pass and N 0 forward
+passes. With rematerialization (see subsubsection 1.11.8), a forward pass is approximately 4 times cheaper
+than the full forward and backward round, thus each forward pass adds only 25% of the baseline training time.
+Therefore, training a model with Ncycle iterations has an additional average cost of (12.5 (Ncycle − 1))%. For
+Ncycle = 4 used in AlphaFold, this corresponds to just 37.5% extra training time, compared to 300% with
+unrolling. While stopping the gradients between iterations leads to a bias in the gradients, we find that does
+not hamper training.
+In AlphaFold, we recycle the predicted backbone atom coordinates from the Structure module (Algorithm 20), and output pair and first row MSA representations from the Evoformer (Algorithm 6). Algorithm 32
+shows their embedding details. Both types of representations are passed through LayerNorm to prepare updates for the corresponding input representations {zij } and {m1i }. Predicted coordinates of beta carbon
+atoms (alpha carbon for glycine) are used to compute pairwise distances, which are then discretized into 15
+bins of equal width 1.25Å that span the range to approx. 20Å (Due to historical reasons the precise bin values
+range from 33⁄8 Å to 213⁄8 Å). The resulting one-hot distogram is linearly projected and added to the pair representation update. The recycling updates are injected to the network as shown in line 6 of Algorithm 2 (for
+a visual scheme, see R sign in Suppl. Fig. 1). This is the only mechanism employed for recycling previous
+predictions, and the rest of the network is identical on all recycling iterations.
+Algorithm 32 Embedding of Evoformer and Structure module outputs for recycling
+β
+
+def RecyclingEmbedder({m1i }, {zij }, {~xiC }) :
+# Embed pair distances of backbone atoms:
+β
+
+β
+
+1:
+
+dij = ~xCi − ~xCj
+
+2:
+
+dij = Linear(one_hot(dij , vbins = [33⁄8 Å, 51⁄8 Å, . . . , 213⁄8 Å]))
+
+# Embed output Evoformer representations:
+3:
+
+z̃ij = dij + LayerNorm(zij )
+
+4:
+
+m̃1i = LayerNorm(m1i )
+
+5:
+
+return {m̃1i }, {z̃ij }
+
+C α used for glycin
+dij ∈ Rcz
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+43
+
+1.11 Training and inference details
+
+Table 4 AlphaFold training protocol. We train each stage until convergence with the approximate timings
+and number of samples provided.
+
+Model
+Number of templates Ntempl
+Sequence crop size Nres
+Number of sequences Nseq
+Number of extra sequences Nextra_seq
+Parameters initialized from
+Initial learning rate
+Learning rate linear warm-up samples
+Structural violation loss weight
+Training samples (·106 )
+Training time
+
+Initial training
+
+Fine-tuning
+
+4
+256
+128
+1024
+Random
+10−3
+128000
+0.0
+≈ 10
+≈ 7 days
+
+4
+384
+512
+5120
+Initial training
+5 · 10−4
+0
+1.0
+≈ 1.5
+≈ 4 days
+
+1.11.1 Training stages
+The training proceeds in two stages outlined in Table 4. We train with sequence crop size 256 and then finetune with the larger crop size 384, where the second stage starts from the pre-trained model weights and uses
+the lower learning rate and no warm-up steps. Additionally, we use the increased number of MSA clusters as
+well as unclustered (extra) sequences. We also apply the structural violation loss.
+1.11.2 MSA resampling and ensembling
+There are several sources of stochastic behaviour in the network. The most important one is MSA preprocessing, which includes MSA block deletion (Algorithm 1) and MSA clustering procedure (subsubsection 1.2.7). To reduce the stochastic effects of these steps, we perform them multiple times, resulting in a set
+of sampled MSA and extra MSA features. Note that the residue cropping (subsubsection 1.2.8), which follows
+these steps, is done consistently across all samples, i.e. the same residue ranges are taken. Also note that we
+do not perform template re-sampling, i.e. the same templates (up to 4) are used for one training example.
+To take advantage of the multiple samples of these features, we embed them multiple times with the Evoformer network and average the output embeddings. Concretely, at each recycling iteration we perform multiple passes of the Evoformer (including all preceding input embedding transformations) for the different
+instances of ”msa_feat” and ”extra_msa_feat”, and we average the output pair and single representations before providing them to the structure module or any other heads of the network (see Algorithm 2). We call this
+technique ensembling (although it does not ensemble final predictions) and we employ it during inference, but
+not during training. Finally, since we also use different samples of the MSA and extra MSA features at each
+recycling iteration, the full system processes the total of Ncycle × Nensemble samples.
+We use Nensemble = 3 for the best checkpoint selection in the evaluator (subsubsection 1.11.7) and also for
+the inference on CASP14 targets performed for this paper. However, with the recycling and pLDDT-based
+selection from 5 model runs, we have found that the additional ensembling has only a minor impact on the
+accuracy of the system (see subsubsection 1.12.2 for details). Given that Nensemble is almost a linear multiplier
+for the inference time, we are gradually deprecating it in our systems, and the inference on the recent PDB
+dataset for this paper has been performed with Nensemble = 1.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+44
+
+1.11.3 Optimization details
+For optimization we use Adam [105] with the base learning rate 10−3 , β1 = 0.9, β2 = 0.999,  = 10−6 .
+We linearly increase (warm-up) the learning rate over the first 0.128 · 106 samples, and further decrease the
+learning rate by a factor of 0.95 after 6.4 · 106 samples. During the fine-tuning stage we have no learning rate
+warm-up, but we reduce the base learning rate by half.
+We train using the mini-batch size of 128, one example per TPU-core. To stabilize the training, we apply
+gradient clipping by the global norm [106] on the parameters independently to every training example in a
+mini-batch, with a clipping value 0.1.
+1.11.4 Parameters initialization
+Linear layers. By default, the weights of the Linear layers are initialized using the LeCun (fan-in) initialization strategy [107] with a truncated normal distribution. By default, the biases of the Linear layers are
+initialized by zero. For the layers immediately followed by a ReLU activations, we use He initializer [108].
+The queries, keys and values projection layers in self-attention layers are initialized using the ’fan-average’
+Glorot uniform scheme [109].
+To improve stability of training, we zero-initialize the weights of the final weight layers [110] in every
+residual layer. This ensures that every residual layer acts as an identity operation at initialization. Furthermore, we zero-initialize all the final projection weight layers of the network: masked MSA prediction logits,
+residue distance prediction logits, model confidence prediction logits. We also identity-initialize the rigid
+frame updates in the Structure module.
+Gating Linear layers, i.e. the Linear layers immediately followed by a sigmoid, are initialized with zero
+weights. The biases are initialized with a constant value of 1, ensuring that at initialisation, the gates are
+mostly-opened with a value of sigmoid(1) = 1/(1 + exp(−1)) ≈ 0.73.
+Layer normalization layers are initialized using the standard scheme: gains set to 1 and biases set to 0.
+Point weights in Invariant Point Attention γ h are initialized to be 1 after the softplus transformation.
+1.11.5 Loss clamping details
+In 90% of training mini-batches the FAPE backbone loss is clamped by emax = 10 Å, in the remaining 10%
+it is not clamped, emax = +∞. For side-chains it is always clamped by emax = 10 Å.
+1.11.6 Dropout details
+We denote the standard Dropout [96] with operator Dropoutx , where x is the dropout rate, i.e. the probability
+to zero an entry. In residual updates for the self-attention operations, we modify it such that dropout masks are
+shared across one of the dimensions. We use DropoutRowwisex operator to denote the version with the mask
+of shape [1, Nres , Nchannel ], which is shared across rows. It is used in the residual updates following the MSA
+row-wise self-attention and the triangular self-attention around starting node. For a given residue (column)
+the same channels are set to zero across all rows in these updates. Similarly, we use DropoutColumnwisex
+operator to denote the version with the mask of the shape [Nres , 1, Nchannel ], which is shared across columns.
+It is used in the residual update following the triangular self-attention around ending node. In the main
+Evoformer stack we also apply the row-wise Dropout when performing the residual updates for the triangular
+multiplicative operations in the pair stack. We keep the same configuration for the unclustered MSA stack
+and the Template pair stack. In the Structure module, we apply Dropout to the results of the Invariant Point
+Attention and the Transition layer. Please refer to Algorithm 6, Algorithm 16, Algorithm 18, and Algorithm 20
+for the exact locations of all Dropout operations and their rates.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+45
+
+1.11.7 Evaluator setup
+During evaluation, we use an exponential moving average of the trained parameters [111] with the decay 0.999. To select the best model during training, we monitor lDDT-Cα performance on a validation set
+of targets collected from CAMEO [112] over 3 months period (2018-12-14 to 2019-03-09). It is filtered to a
+maximum sequence length of 700, and there is no residue cropping at evaluation time.
+1.11.8 Reducing the memory consumption
+AlphaFold model has high memory consumption, both in training and during inference. This is largely driven
+by the logits in the self-attention layers and the large pair and MSA activiations. For example, ahijk in Algo3 ·N
+rithm 13 and Algorithm 14 consists of (Nres
+head ) floating point numbers. We now describe the techniques
+we employ to perform memory-efficient training and inference of this model.
+Training. We store all intermediate activations of the model in bfloat16 format, which only requires two
+bytes per floating point number. Training is performed on relatively short sequence crop sizes, up to Nres =
+384. The cubic scaling of the self-attention logits makes it impractical to store them all for backpropagation,
+as is done in naive backpropagation. Specifically, storing just the attention logits of the largest sublayer type
+for all blocks requires more memory than the 16 GiB available on TPUv3 core:
+3843 · 4 · 48 ·
+3
+Nres
+
+Nhead
+
+Nblock
+
+2
+
+bytes per bfloat16
+
+= 20.25 GiB.
+
+(49)
+
+To solve this, we leverage a standard technique called gradient checkpointing, or rematerialization [113,
+114]. Concretely, during the forward pass, we store the activations that are passed between the Nblock = 48
+Evoformer blocks. During the backward pass, we recompute all activations within the blocks. This means we
+need to store the logits for only one layer at a time, bringing down the memory consumption to just 0.4 GiB.
+Storing the intermediate pair activations requires an extra
+3842 · 128 · 48 ·
+cz
+
+2
+Nres
+
+Nlayer
+
+2
+
+bytes per bfloat16
+
+= 1.7 GiB.
+
+(50)
+
+Rematerialization’s computational cost is equivalent to an extra forward pass through the network. Empirically, the backward pass is twice as expensive as the forward pass, so rematerialization increases the training
+time by 33%.
+Inference. The intermediate activations are stored in float32 format, requiring four bytes per floating
+point number. During inference, we do not need to store the intermediate activations, which reduces the
+memory consumption. However, we also consider proteins with dramatically larger Nres than during training.
+For example, T1044 has Nres = 2180, so a single layer’s logits have the size of
+21803 · 4 ·
+3
+Nres
+
+Nhead
+
+4
+
+bytes per float32
+
+= 154.4 GiB,
+
+(51)
+
+which again exceeds the memory size of modern accelerators. To reduce this burden, for each type of layer in
+the network, we identify a ‘batch-like’ dimension where the computation is independent along that dimension.
+We then execute the layer one ‘chunk’ at a time, meaning that only the intermediate activations for that chunk
+need to be stored in memory at a given time. Thus, reducing the chunk size improves memory efficiency, but
+at a cost of performance, as small chunks cannot fully exploit the parallelism of the hardware. In practice, we
+often use a chunk size of 4, resulting in much lower memory consumption for the logits:
+21802 · 4 ·
+2
+Nres
+
+Nhead
+
+4
+
+·
+
+4
+
+chunk size bytes per float32
+
+The same technique was used in a similar context in [115].
+
+= 0.3 GiB.
+
+(52)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+46
+
+1.12 CASP14 assessment
+1.12.1 Training procedure
+
+Table 5 Training protocol for CASP14 models. The models in bold (i.e. 1.1.1 – 1.2.3) were used in the
+assessment. We report the number of training samples and the training time (in days and hours) until the
+best validation score. Three dots (· · · ) indicate the same value as in the former column.
+initial training
+Model
+Parameters initialized from
+Number of templates Ntempl
+Sequence crop size Nres
+Number of sequences Nseq
+Number of extra sequences Nextra_seq
+Initial learning rate
+Learning rate linear warm-up samples
+Structural violation loss weight
+“Experimentally resolved” loss weight
+Training samples (·106 )
+Training time
+
+first fine-tuning
+
+second fine-tuning
+
+1
+
+1.1
+
+1.2
+
+1.1.1
+
+1.1.2
+
+1.2.1
+
+1.2.2
+
+1.2.3
+
+Random
+4
+256
+128
+1024
+10−3
+128000
+0.0
+0.0
+9.2
+6d 6h
+
+Model 1
+4
+···
+512
+···
+5 · 10−4
+0
+1.0
+0.01
+1.1
+1d 10h
+
+···
+0
+···
+···
+···
+···
+···
+···
+···
+1.7
+2d 3h
+
+Model 1.1
+4
+384
+···
+5120
+···
+···
+···
+···
+0.3
+20h
+
+···
+···
+···
+···
+1024
+···
+···
+···
+···
+0.6
+1d 13h
+
+Model 1.2
+0
+···
+···
+5120
+···
+···
+···
+···
+1.4
+4d 1h
+
+···
+···
+···
+···
+···
+···
+···
+···
+···
+1.1
+3d
+
+···
+···
+···
+···
+1024
+···
+···
+···
+···
+2.4
+5d 12h
+
+We now describe the exact training process for the models used in the CASP14 assessment. The training of
+the model proceeds in three stages with exact details presented in Table 5. First, we train model 1 with a lower
+crop size and number of sequences for about a week. Then, we fine-tune this model with more sequences,
+enabled violation losses, and a lower learning rate. For historical reasons, we also added the “experimentally
+resolved” predictor (subsubsection 1.9.10) at this stage. We fine-tune two models: model 1.1 uses templates,
+while model 1.2 does not (the parameters pertaining to templates are dropped in this case). To obtain the final
+five models, we perform a second round of fine-tuning with larger sequence crop size and more extra MSA
+sequences from these two models. All CASP14 models are trained with distillation (subsection 1.3) from a
+slightly earlier version of the model. Empirically, we find that small changes in the model details have little
+effect on the distillation procedure. The training process, excluding the preparation of the distillation dataset,
+takes about two weeks. Since the assessment, we have found that the intermediate fine-tuning stage can be
+omitted without degradation of quality, and we follow the simplified training protocol (Table 4) in our ablation
+studies.
+We continued to improve the models during the CASP14 assessment, thus some of our submissions used
+slightly different details, and some submissions had manual interventions. For more details please refer to the
+short description in [116] and also an upcoming publication in “Proteins: Structure, Function, and Bioinformatics”. For the accuracy comparison of the systems see subsubsection 1.12.2 below.
+1.12.2 Inference and scoring
+At inference time, the five models are independently executed on the same set of inputs. Then, the predictions
+are re-ranked according to the chain pLDDT confidence measure. The original CASP14 submissions were
+inferenced with Nensemble = 8, which has been later reduced in our system.
+After the CASP14 assessment we have re-evaluated the final system described in subsubsection 1.12.1 with
+Nensemble = 3 and obtained a mean domain GDT of 87.65, compared to 87.66 GDT that our actual submissions
+get on the same set of domains. The median Cα RMSD at 95% coverage is 0.96 for both the described system
+and the actual submissions. Furthermore, the described system without ensembling (Nensemble = 1) obtains
+GDT 87.56, which is only 0.1 points less than the full system, while yielding 8 times speedup for the inference.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+47
+
+For this evaluation, we are predicting the structure of all non-cancelled, non-server targets as full chains
+(except T1085 and T1086, for which the structures are embargoed). Note that the long (2180 residues) target
+T1044 structure has also been predicted as a whole chain and then split into the domain targets (T1031, T1033,
+T1035, T1037, T1039–T1043) for the evaluation. We used all FM, TBM-easy, TBM-hard and FM/TBM
+domains (87 in total):
+T1024-D1, T1024-D2, T1026-D1, T1027-D1, T1029-D1, T1030-D1, T1030-D2, T1031-D1, T1032-D1,
+T1033-D1, T1034-D1, T1035-D1, T1037-D1, T1038-D1, T1038-D2, T1039-D1, T1040-D1, T1041-D1,
+T1042-D1, T1043-D1, T1045s2-D1, T1046s1-D1, T1046s2-D1, T1047s1-D1, T1047s2-D1, T1047s2-D2,
+T1047s2-D3, T1049-D1, T1050-D1, T1050-D2, T1050-D3, T1052-D1, T1052-D2, T1052-D3, T1053-D1,
+T1053-D2, T1054-D1, T1055-D1, T1056-D1, T1057-D1, T1058-D1, T1058-D2, T1060s2-D1, T1060s3-D1,
+T1061-D1, T1061-D2, T1061-D3, T1064-D1, T1065s1-D1, T1065s2-D1, T1067-D1, T1068-D1, T1070-D1,
+T1070-D2, T1070-D3, T1070-D4, T1073-D1, T1074-D1, T1076-D1, T1078-D1, T1079-D1, T1080-D1,
+T1082-D1, T1083-D1, T1084-D1, T1087-D1, T1089-D1, T1090-D1, T1091-D1, T1091-D2, T1091-D3,
+T1091-D4, T1092-D1, T1092-D2, T1093-D1, T1093-D2, T1093-D3, T1094-D1, T1094-D2, T1095-D1,
+T1096-D1, T1096-D2, T1099-D1, T1100-D1, T1100-D2, T1101-D1, T1101-D2.
+
+We use this set for all CASP14-related results reported in the paper.
+
+1.13 Ablation studies
+1.13.1 Architectural details
+We estimate the relative importance of key components of the architecture by training and evaluating a number
+of ablation models:
+Baseline. Baseline model as described in the paper without noisy-student self-distillation. All other ablations should be understood relative to this baseline model.
+With self-distillation training. Full model as described in the paper including noisy-student self-distillation
+training.
+No templates. We remove the template stack and the template torsion angle features, see subsubsection 1.7.1 and Suppl. Fig. 1. The number of MSA clusters Nclust is increased by Ntempl = 4 to keep the overall
+size of the MSA representation.
+No raw MSA (use MSA pairwise frequencies). AlphaFold builds representations by performing attention
+on individual MSA sequences. Here we ablate whether this is important and modify the system to provide
+only first and second order MSA statistics.
+We denote the raw MSA data as M , where Msi is the amino acid of sequence s at position i. We also denote
+the total number of sequences as S. We define the MSA profile for position i as the empirical distribution of
+amino acids occurring at this position:
+pi (A) =
+
+S
+1X
+[Msi = A],
+S
+
+(53)
+
+s=1
+
+where [ ] denotes the Iverson bracket and is equal to 1 if the expression inside is true and 0 otherwise. Furthermore we define the pairwise frequency table as the probability of observing amino acid A at position i and
+amino acid B at position j:
+S
+1X
+fij (A, B) =
+[Msi = A][Msj = B].
+(54)
+S
+s=1
+
+We note that these type of MSA features are commonly used in the literature, e.g. by the trRosetta pipeline
+[117] (with further down-weighting of redundant sequences in the averages). Usually these first and second
+order statistics are transformed by computing the inverse covariation matrix or fitting a statistical model like
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+48
+
+a Potts Model before the features are passed to the network. Here we will just use the raw features without
+sequence nonlocal preprocessing and allow the model to process them as needed.
+This ablation will have access to the following MSA information:
+•
+•
+•
+•
+•
+
+MSA profile, i.e. the marginal distribution pi (A);
+Expected number of deletions for a given position;
+MSA pairwise frequency table fij (A, B);
+Second order statistics for the number of deletions at position i and amino acid types at position j;
+Second order statistics for the number of deletions at different positions.
+
+We implement this ablation in terms of a set of small interventions in our system. We will show that with
+these interventions all provided MSA information can be directly derived from the features listed above.
+In the data pipeline, we set the number of clusters Nclust = 1 so that the MSA representation only has a
+single row. The first cluster is always set to the sequence of the modelled protein. Furthermore in the clustering
+stage all sequences in the MSA will be assigned to this single cluster, this means the cluster profile feature is
+just the full MSA profile.
+We also remove the template torsion angle features that otherwise would be concatenated as additional
+rows. Since columnwise MSA attention would be trivial in this setup, we remove this operation from the
+Evoformer stack.
+Furthermore we replace the extra MSA stack (Algorithm 18) with a single outer product mean (Algorithm 10) on the extra MSA features {fsextra_msa_feat
+} and use it to initialize the pair representation.
+ei
+We denote the set of features (MSA sequences and deletions) usually passed to the extra MSA stack by fsi
+and analyse what information of the MSA can be accessed by the model. Applying
+the outer
+P
+P product
+P mean
+operation on fsi yields linear projections of the following kind of terms:
+f
+⊗
+f
+,
+f
+,
+si
+sj
+si
+s
+s
+s fsj .
+The first kind of terms comes from the outer product on the linearly projected features, the other two come
+from the mixed bias and features terms in the outer product, since we use linear transformations with a bias.
+When writing out the MSA features explicitly, we see that the first term contains the pairwise frequencies.
+Additionally, we have the second order statistics involving deletions. The other two terms result in an outer
+sum of profiles and expected number of deletions.
+No triangles, biasing, or gating (use axial attention). First, we remove the triangle inductive bias. For
+this we replace the pair bias bhij in Algorithm 13 and Algorithm 14 with a projection of the relative distances
+along the chain, i.e. relposij from Algorithm 4. We also replace the two triangular multiplicative updates
+(Algorithm 11 and Algorithm 12) with two self-attention layers identical to the ones described above.
+Furthermore, we replace the pair bias in the row-wise MSA attention Algorithm 7 with the projected relative
+distances relposij and remove the gating in all attention operations. After these modifications, the attention
+used in the main part of the model closely matches the standard axial (or criss-cross) attention [118].
+These modifications also imply that the pair representation does not influence the MSA representation
+directly. Though it is important to note that we keep Algorithm 10 without any modifications, so the MSA
+representation still influences the pair representation. We also do not modify the structure module, as such the
+pair representation still participates in building the structure.
+No recycling. We remove recycling (see subsection 1.10) during training and inference, i.e. we only make
+a single pass through the model.
+No invariant point attention (use direct projection). We replace the prediction of backbone frames,
+including all of the IPA Algorithm 22, with a linear direct projection of the backbone frame similar to Algorithm 23. The direct projection consists of linear layer applied to the final Evoformer single embedding to
+produce a Nres × 7 matrix. The seven coordinates are converted into a backbone frame in the following way:
+The first 4 coordinates (qw , qx , qy , qz ) are converted to the rotation matrix by creating a normalized quaternion
+q
+(a, b, c, d) = (1 + qw , qx , qy , qz )/ (1 + qw )2 + qx2 + qy2 + qz2 ,
+(55)
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+and applying the standard formula for converting a quaternion to a rotation matrix:
+
+
+a2 + b2 − c2 − d2
+2bc − 2ad
+2bd + 2ac
+
+
+2bc + 2ad
+a2 − b2 + c2 − d2
+2cd − 2ab
+R=
+.
+2
+2
+2
+2
+2bd − 2ac
+2cd + 2ab
+a −b −c +d
+
+49
+
+(56)
+
+The last 3 predicted coordinates (tx , ty , tz ) are used as the translation vector. We also apply the side chain
+torsion module directly to the single embedding in the same manner as in the full model. In this ablation,
+there is no iterative process in the Structure module. Additionally, the final pair representation is not used in
+any way in the Structure module in this ablation but is used for the distogram loss.
+No invariant point attention and no recycling. This ablation simply combines the changes of the two
+individual ablations described above.
+No end-to-end structure gradients (keep auxiliary heads). We stop the gradients from the structure
+module into the main part of the network (i.e. the structure losses have no effect on Evoformer parameters),
+which means the Evoformer embeddings are trained only using the distogram loss and other auxiliary losses.
+No auxiliary distogram head. We remove the auxiliary loss that predicts distograms (see subsubsection 1.9.8).
+No auxiliary masked MSA head. We remove the auxiliary BERT-style loss that imputes the masked values
+in the MSA (see subsubsection 1.9.9). The ablation still uses the same MSA processing, i.e. the MSA is still
+randomly masked.
+1.13.2 Procedure
+Models training. For all ablations we kept hyperparameters from the main model configuration, which we
+have not re-tuned. We trained the models in two stages following the main training protocol shown in Table 4.
+All models apart from one ablation were trained without the distillation dataset. Including examples from the
+full AlphaFold distillation dataset would mean leaking architectural choices of the models that were used to
+create this dataset, while re-creating the dataset for each individual ablation would be too computationally
+expensive. For each ablation we trained 3 or 4 identical models with different random seeds and discarded
+any unstable runs using the validation set from subsubsection 1.11.7.
+Datasets and metrics. We used two different test sets for ablations analysis. Firstly, we used the set of
+CASP14 domains described in subsubsection 1.12.2 and evaluated individual domain predictions with the
+Global Distance Test (GDT) [119]. Secondly, we used the redundancy-reduced set of recent PDB chains
+described in Methods, further restricted to protein chains with template coverage ≤ 30% at 30% identity
+(N = 2261 targets). We scored the full chain predictions with lDDT-Cα [98].
+1.13.3 Results
+Ablation results are presented in Fig. 4b of the main paper. We show the difference in mean backbone accuracy
+for each ablation relative to an average of baseline seeds using both the CASP14 targets and the redundancyand template-reduced set from recent PDB. Confidence intervals for each training seed are given by bootstrap
+over domains for CASP and full chains for PDB. Additionally, in Suppl. Fig. 10 we find that the different
+ablations have quite non-uniform dependence on the MSA depth. Some ablations like No Masked MSA head
+primarily affect shallow MSAs whereas others such as No Recycling have effects at all MSA depths.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+50
+
+Supplementary Figure 10 Ablations accuracy relative to the baseline for different values of the MSA depth
+on the recent PDB set of chains, filtered by template coverage ≤ 30% at 30% identity (N = 2261 protein
+chains). MSA depth is computed by counting the number of non-gap residues for each position in the MSA
+(using the Neff weighting scheme with a threshold of 80% identity measured on the region that is non-gap in
+either sequence) and taking the median across residues. Plots are restricted to the range [-15, 15]; the red
+lines represent LOESS mean estimates with 95% confidence intervals for the LOESS.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+51
+
+The presented ablations remove relatively independent components of the system, such as end-to-end training, iterative structure refinement, triangular inductive bias, and others from the no-self-distillation baseline.
+While this analysis helps determine the relative importance of different ideas in the model, there are two major limitations. First, hyperparameters were not re-tuned when performing the ablations which could make
+ablations appear more significant than in a properly tuned model. Second, interactions between different
+components may be strongly non-linear as the components of the AlphaFold system can have overlapping or
+interacting roles. As a dramatic example, removal of Invariant Point Attention (IPA) from the model has only
+a tiny effect on accuracy for recent PDB, but removing both recycling and IPA from the model has a much
+larger effect than removing recycling alone. This double-ablation must be interpreted with caution, however,
+as it is not clear which missing features of recycling (embedding of intermediate structures, much deeper
+network, intermediate losses, or weight tying) explain the severe ablation.
+In general, the ablations confirm that many architecture and training features have an effect on final AlphaFold accuracy and the relative magnitude of effects are broadly consistent whether measured on the humancurated CASP set or the much larger recent PDB set.
+The strong contributions of self-distillation training and masked MSA losses suggest that these techniques
+are making effective use of unlabelled data within the supervised training framework (and despite the lack of
+unsupervised pre-training). The various architecture ablations confirm that many different architectural innovations contribute to the final AlphaFold accuracy. Finally, careful handling of the structure and intermediate
+losses (using both end-to-end structure gradients and providing intermediate loss gradients in recycling) is
+important to achieving full accuracy. This is likely due to pushing the network towards having a concrete
+representation of the structure as appears to be present in the trajectories of intermediate structure predictions.
+A surprisingly small role is played by the distogram head, suggesting that it is not a necessary output to
+obtain high-accuracy structures. Another surprise is that equivariance in the network is not essential as the
+single ablation of IPA, which removes all equivariant components, is still a very accurate structure prediction
+network. Similarly, the single ablation of raw MSA leads to a drop in accuracy but it is not catastrophic.
+We hypothesize though that each of these features would show much larger effects within multiple ablations
+similar to the effect seen in ablating both IPA and recycling.
+
+1.14 Network probing details
+This paper includes supplementary videos with structures evolving over 4 recycling iterations and 48 Evoformer blocks. Static versions of those videos are also presented as GDT curves per 4 · 48 = 192 intermediate
+points and discussed in the main part of the paper. In this section we provide additional details about how
+these results were produced.
+We started with a full network architecture and added additional probing modules after each Evoformer
+block. Concretely, we incorporated copies of the Structure module (subsection 1.8) with the same architecture
+and configuration and optimized the probing loss Lprobe , defined as the average of the losses of these modules.
+For inputs, we provided the current versions of the MSA and pair representations produced up to this point in
+the network. As with the main network, we had different trainable parameters across Evoformer blocks, but
+tied across recycling iterations. In other words, we trained 48 additional sets of weights for these modules.
+Note that we have not attached any probing modules to the template pair stack or the extra MSA stack. Importantly, when training the probing network, we stopped all gradients coming to the main network parameters
+both from the probing and the main losses. Outputs of the probing modules have not been recycled in any
+way, i.e. they were used for the analysis only.
+In the presented analysis, we were probing one of the five CASP14 models (model 1.1.2 from Table 5
+to be precise). We used the same data sizes as in this model, i.e. Ntempl = 4, Nres = 384, Nseq = 512,
+and Nextra_msa = 1024. For the learning rate, we used the standard schedule from our training stage (see
+subsubsection 1.11.3). Following the main training stage setup, we have not used violation losses (subsubsection 1.9.11) for the probing. In the evaluator (subsubsection 1.11.7) we used the validation probing loss Lprobe
+for the model selection and we changed the exponential moving average decay to 0.99 for a faster training
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+52
+
+startup. We trained the probing network for about 5 days until convergence. We used Nensemble = 1 both for
+the build-in evaluator and for the presented inference to simplify setup and reduce memory usage.
+
+1.15 Novel fold performance
+Across CASP14 and CASP_Commons, five of the assessed targets were sufficiently distinct from prior PDB
+entries to be called novel folds. Targets T1035, T1037, T1040 and T1042 (PDB:6vr4) were highlighted as
+new folds by the CASP14 assessors [120], while C1905 (PDB:6xdc) is called novel in its primary citation
+[121]. Here we evaluate AlphaFold’s performance on an expanded test set of recent structures selected for
+their novelty.
+Three heuristics were used to identify recent PDB chains that might be novel with respect to AlphaFold’s
+training set:
+1. The PDB abstract or structure title contains the phrase "novel fold".
+2. The chain contains a Pfam domain from a clade not associated with any structure released before 201804-30.
+3. The chain maps to a SCOP fold not associated with any structure released before 2018-04-30.
+The SIFTS resource was used to map PDB chains to Pfam and SCOP [122], with clade and fold annotations
+downloaded from the respective project websites [123, 124]. Where multiple similar structures were surfaced
+from the same study only one was kept, and trivial structures consisting of a single helix were also discarded.
+Where it was clear from the literature that a specific domain was novel, or where the chain consisted of
+multiple domains joined by an unresolved linker, the structure was cropped to a more reasonable unit for TMalign comparison. The final test set was selected by TM-align comparison against all chains in the training set
+[103]. Any target with a TM-score greater than 0.6 was eliminated (normalising with respect to the length of
+the candidate novel structure). Of the remaining 24 targets, 15 have a TM-score of less than 0.5 to the closest
+training set chain.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+53
+
+90
+
+(52-464)
+
+6l6h_A
+
+6xfi_A
+
+6a51_A
+
+6vr4_A
+
+6bui_D
+
+5w7l_A
+
+6vkf_A
+
+(235-336)
+
+(337-369,531-901)
+
+6lqn_A
+
+6vr4_A
+
+7ct p_A
+
+(147-319)
+
+(363-644)
+
+(3-403)
+
+6sj9_A
+
+6fcx_A
+
+(1744-1996,2145-2167)
+
+6vr4_A
+
+(172-375)
+
+6zyv_A
+
+6sp2_A
+
+6j3q_0
+
+6xdc_A
+
+6l2w_A
+
+6w6w_B
+
+30
+
+6z0u_Z
+
+40
+
+(1372-1501)
+
+50
+
+6fes_A
+
+60
+
+6c70_D
+
+(1-100)
+
+7bqb_A
+
+70
+
+6vr4_A
+
+lDDT-Cα
+
+80
+
+90
+
+lDDT-Cα
+
+80
+70
+
+6xdc_A
+
+60
+50
+40
+30
+
+6w6w_B
+
+6j3q_0
+
+6l2w_A
+10 1
+
+6w6w_A
+
+6w6w_B
+10 2
+10 3
+Sequences in full chain MSA
+
+10 4
+
+Supplementary Figure 11 Performance on a set of novel structures (N = 24 protein chains). Where the
+target is not a full chain, the evaluated region is given as residue ranges in PDB numbering. 6fes_A has the
+highest TM-score to a training set chain (0.57); the structure comparison shows this target (green) aligned to
+its closest match with cealign [125] (5jxf_B, red, cropped for easier comparison). The bottom graph shows the
+relationship between performance and full chain MSA depth, with low lDDT-Cα outliers labelled. For outlier
+6w6w_B, we also show the prediction (blue) aligned to two possible ground truth structures (green): 6w6w_B
+and the corresponding subsequence of 6w6w_A which strongly suggests that AlphaFold has simply produced
+an alternative conformation of this sequence.
+
+Prediction used Nensemble = 3 and disallowed templates released after 2018-04-30, but otherwise followed
+our CASP14 procedure. The input to AlphaFold was the full chain fasta sequence for each target, extracted
+from the relevant mmCIF file. Figure 11 shows the results. The median lDDT-Cα on this set was 90.3,
+with mean lDDT-Cα 82.6. Investigating the outliers, we found that almost all could be explained by a small
+MSA containing fewer than 20 sequences. In the case of 6w6w_B, the ground truth structure may be an
+alternate conformation adopted by this subsequence in complex. The AlphaFold prediction closely matches
+the conformation seen in 6w6w_A, which forms part of a larger domain. We conclude that AlphaFold is able
+to predict novel structures well, subject to the same constraints described elsewhere in this work (a sufficiently
+large MSA, and minimal dependence of the conformation on missing context from surrounding chains).
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+54
+
+1.16 Visualization of attention
+In this section we are going to analyse a small subset of the attention patterns we see in the main part of
+the model. This will be restricted to relatively short proteins with fairly shallow MSA’s in order for easier
+visualization.
+We are going to examine the attention weights in the attention on the pair representation in the “Triangular
+gated self-attention around starting node” (Algorithm 13). The attention pattern for a given head h is a third
+order tensor ahijk (line 5 of Algorithm 13), here we will investigate different slices along the i axis as well as
+averages along this axis, and display the jk array as a heat map. We specify the attention pattern for a specific
+head by the recycling index r, layer index l and head index h. We show the attention patterns in Suppl. Fig. 12
+
+a
+
+d
+
+b
+
+c
+
+Supplementary Figure 12 Visualization of row-wise pair attention. (a) Attention patterns in layer 0, head
+0. (b) Attention patterns in layer 2, head 2. (c) Attention patterns in layer 11, head 1. (d) Predicted Cα – Cα
+distances
+
+In layer 0, head 0 (Suppl. Fig. 12a) we see a pattern that is similar to a convolution, i.e. the pair representation at (i, i + j) attends to the pair representation (i, i + k), where j and k are relatively small and the pattern
+is fairly independent of i. The radius of the pattern is 4 residues, we note that the hydrogen bonded residues
+in an alpha helix are exactly 4 residues apart. Patterns like this are expected in early layers due to the relative
+position encoding, however one would naively expect it to be wider, as the relative positions run to 32.
+In layer 2, head 2 (Suppl. Fig. 12b) we see a very specific attention pattern. We see that positions 14, 28
+and 80 play a special role. These correspond to the positions of cysteine residues in the protein. We see that
+at the cysteine positions the attention is localized to the other cysteine positions as exemplified by the bands
+in the first two panels. Meanwhile away at positions different from the cysteine like position 20, we see that
+the attention is devoid of features suggesting that the model does not use the attention at these positions. We
+found this behaviour to be consistent across different positions and proteins, this possibly indicates finding
+possible disulfides as a key feature of some heads.
+A head later in the network (Suppl. Fig. 12c) shows a rich, non-local attention pattern resembling the
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+55
+
+distance between pairs in the structure (Suppl. Fig. 12d).
+In Suppl. Fig. 13 we show a visualization of the attention pattern in the MSA along the columns ahsti (line 4
+of Algorithm 8). We slice along the last axis i and display the st array as heat map.
+
+a
+
+d
+
+b
+
+c
+
+e
+
+Supplementary Figure 13 Visualization of attention in the MSA along sequences. (a) Attention patterns in
+layer 0, head 7. (b) Attention patterns in layer 0, head 7 in the last recycling iteration. (c) Attention patterns in
+layer 6, head 6. (d) Predicted Cα – Cα distances (e) Hamming distances between the sequences of the MSA
+
+The original MSA subset shown to the main part of the model is randomly sampled. As such the order is
+random except for the first row. The first row is special because it contains the target sequence and is recycled
+in consecutive iterations of the model. Due to the shallow MSA of this protein, the random subset leads to
+a random permutation of the sequences. In order to facilitate easier interpretation of the attention patterns
+here we reorder the attention tensor by using a more suitable order for the MSA. We perform a hierarchical
+clustering using the Ward method with simple Hamming distance as a metric and use the output to re-index
+the sequence dimension in the MSA attention tensor. We resort the indices from the hierarchical clustering
+manually to keep the target sequence in the first row. This manual sorting is done in such a way as to keep the
+tree structure valid. The Hamming distances between the reordered sequences (see Suppl. Fig. 13e) show a
+block-like structure quite clearly after the reordering.
+The attention pattern in the first layer of the network in the first recycling iteration (e.g. layer 0, head 7 in
+Suppl. Fig. 13a) is not very informative and is largely averaging as can be seen by looking at the range of the
+attention weights.
+In the same head, but in the last recycling iteration (Suppl. Fig. 13b) we see that all sequences at all positions
+attend to the first row. Therefore this head behaves differently upon recycling and is presumably important for
+distribution the information in the recycled first row to the rest of the MSA representation.
+Layer 6, head 6 (Suppl. Fig. 13c) shows a pattern that is fairly common in the column-wise MSA attention,
+here the pattern only varies lightly as one goes along the sequence and there is a clear structure in blocks of
+sequences that attend to each other. We note that these seem somewhat similar to the blocks derived from
+hierarchical clustering using Hamming distance.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+56
+
+Whether attention patterns provide a good explanation for the behaviour of a given model or are predictive
+of interventions into the model is a topic of debate in the community, see [126], [127], [128]. A detailed
+analysis of the generality and predictivity of these attention patterns is beyond the scope of this paper.
+
+1.17 Additional results
+We present median all-atom RMSD95 on the CASP14 set in Suppl. Fig. 14. Figure 1 of the main paper shows
+the corresponding results on just the Cα atoms (RMSD95 -Cα).
+
+4
+
+3
+
+2
+
+0
+
+G473
+G129
+G403
+G480
+G009
+G498
+G368
+G488
+G032
+G362
+G420
+G324
+G042
+G253
+
+1
+
+G427
+(AlphaFold)
+
+Median RMSD95-All atom in Å
+
+5
+
+Supplementary Figure 14 Median all-atom RMSD95 on the CASP14 set of protein domains (N = 87 protein domains) relative to the top-15 entries (out of 146), group numbers correspond to the numbers assigned
+to entrants by CASP; error bars represent the 95% confidence interval of the median, estimated with 10,000
+bootstrap samples.
+
+In addition to the main Figure 2a, we show all-atom RMSD and RMSD for 100% coverage in Suppl.
+Fig. 15. We also report the quartiles of the distributions in Table 6. For this analysis, the recent PDB set
+of 10795 chains described in Methods was further filtered to exclude proteins with a template (identified by
+hmmsearch) from the training set with more than 40% sequence identity covering more than 1% of the chain.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+57
+
+Supplementary Figure 15 Histograms of all-atom and backbone RMSD at 95% and 100% coverage for
+full-chain predictions on the template-reduced set (N = 3144 protein chains). Error bars are 95% confidence
+intervals (Poisson).
+
+Table 6 Quartiles of distributions of all-atom and backbone RMSD at 95% and 100% coverage for full-chain
+predictions on the template-reduced set (N = 3144 protein chains).
+
+Quantity (in Å)
+RMSD - Cα
+RMSD - All Atom.
+RMSD95 - Cα
+RMSD95 - All Atom
+
+lower quart.
+
+median
+
+upper quart.
+
+1.31
+1.80
+0.79
+1.17
+
+2.32
+2.80
+1.46
+1.89
+
+6.49
+6.78
+4.33
+4.72
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+58
+
+References
+[85] Jimmy Ba, Jamie R Kiros, and Geoffrey E Hinton.
+arXiv:1607.06450, 2016.
+
+Layer normalization.
+
+arXiv preprint
+
+[86] L Steven Johnson, Sean R Eddy, and Elon Portugaly. Hidden markov model speed heuristic and iterative
+hmm search procedure. BMC Bioinformatics, 11(1):1–8, 2010.
+[87] Michael Remmert, Andreas Biegert, Andreas Hauser, and Johannes Söding. Hhblits: lightning-fast
+iterative protein sequence searching by hmm-hmm alignment. Nature Methods, 9(2):173–175, 2012.
+[88] Alex L Mitchell, Alexandre Almeida, Martin Beracochea, Miguel Boland, Josephine Burgin, Guy
+Cochrane, Michael R Crusoe, Varsha Kale, Simon C Potter, Lorna J Richardson, Ekaterina Sakharova,
+Maxim Scheremetjew, Anton Korobeynikov, Alex Shlemov, Olga Kunyavskaya, Alla Lapidus, and
+Robert D Finn. MGnify: the microbiome analysis resource in 2020. Nucleic Acids Research,
+48(D1):D570–D578, 11 2019.
+[89] Baris E Suzek, Yuqi Wang, Hongzhan Huang, Peter B McGarvey, Cathy H Wu, and UniProt Consortium.
+Uniref clusters: a comprehensive and scalable alternative for improving sequence similarity searches.
+Bioinformatics, 31(6):926–932, 2015.
+[90] Milot Mirdita, Lars von den Driesch, Clovis Galiez, Maria J Martin, Johannes Söding, and Martin
+Steinegger. Uniclust databases of clustered and deeply annotated protein sequences and alignments.
+Nucleic Acids Research, 45(D1):D170–D176, 2017.
+[91] Martin Steinegger, Markus Meier, Milot Mirdita, Harald Vöhringer, Stephan J Haunsberger, and Johannes Söding. Hh-suite3 for fast remote homology detection and deep protein annotation. BMC Bioinformatics, 20(1):1–15, 2019.
+[92] Martin Steinegger and Johannes Söding. Clustering huge protein sequence sets in linear time. Nature
+Communications, 9(1):1–8, 2018.
+[93] Qizhe Xie, Minh-Thang Luong, Eduard Hovy, and Quoc V Le. Self-training with noisy student improves
+imagenet classification. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern
+Recognition, pages 10687–10698, 2020.
+[94] Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N Gomez, Lukasz
+Kaiser, and Illia Polosukhin. Attention is all you need. In 31st Conference on Neural Information
+Processing Systems (NeurIPS 2017), pages 6000–6010, 2017.
+[95] Zihang Dai, Zhilin Yang, Yiming Yang, Jaime Carbonell, Quoc Le, and Ruslan Salakhutdinov.
+Transformer-XL: Attentive language models beyond a fixed-length context. In Proceedings of the 57th
+Annual Meeting of the Association for Computational Linguistics, pages 2978–2988, Florence, Italy,
+July 2019. Association for Computational Linguistics.
+[96] Nitish Srivastava, Geoffrey Hinton, Alex Krizhevsky, Ilya Sutskever, and Ruslan Salakhutdinov.
+Dropout: a simple way to prevent neural networks from overfitting. The Journal of Machine Learning Research, 15(1):1929–1958, 2014.
+[97] RA Engh and R Huber. Structure quality and target parameters. In International Tables for Crystallography, Vol. F. John Wiley & Sons, Ltd, 2006.
+[98] Valerio Mariani, Marco Biasini, Alessandro Barbato, and Torsten Schwede. lddt: A local superpositionfree score for comparing protein structures and models using distance difference tests. Bioinformatics,
+29(21):2722–2728, 2013.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+59
+
+[99] Viktor Hornak, Robert Abel, Asim Okur, Bentley Strockbine, Adrian Roitberg, and Carlos Simmerling.
+Comparison of multiple amber force fields and development of improved protein backbone parameters.
+Proteins: Structure, Function, and Bioinformatics, 65(3):712–725, 2006.
+[100] Peter Eastman, Jason Swails, John D Chodera, Robert T McGibbon, Yutong Zhao, Kyle A Beauchamp,
+Lee-Ping Wang, Andrew C Simmonett, Matthew P Harrigan, Chaya D Stern, Rafal P Wiewiora,
+Bernard R Brooks, and Vijay S Pande. Openmm 7: Rapid development of high performance algorithms
+for molecular dynamics. PLOS Computational Biology, 13(7):1–17, 07 2017.
+[101] Mohammed AlQuraishi. End-to-End Differentiable Learning of Protein Structure. Cell Systems,
+8(4):292–301.e3, 24 April 2019.
+[102] Yang Zhang and Jeffrey Skolnick. Scoring function for automated assessment of protein structure
+template quality. Proteins: Structure, Function, and Bioinformatics, 57(4):702–710, 2004.
+[103] Yang Zhang and Jeffrey Skolnick. TM-align: a protein structure alignment algorithm based on the
+TM-score. Nucleic acids research, 33(7):2302–2309, 2005.
+[104] Jacob Devlin, Ming-Wei Chang, Kenton Lee, and Kristina Toutanova. Bert: Pre-training of deep bidirectional transformers for language understanding. arXiv preprint arXiv:1810.04805, 2018.
+[105] Diederik P Kingma and Jimmy Ba. Adam: A method for stochastic optimization. In Proceedings of
+the International Conference on Learning Representations, 2015.
+[106] Razvan Pascanu, Tomas Mikolov, and Yoshua Bengio. On the difficulty of training recurrent neural
+networks. In Proceedings of the International Conference on Machine Learning, pages 1310–1318,
+2013.
+[107] Y. LeCun, L. Bottou, G. Orr, and K. Muller. Efficient backprop. In Neural Networks: Tricks of the
+Trade. Springer, 1998.
+[108] Kaiming He, Xiangyu Zhang, Shaoqing Ren, and Jian Sun. Delving deep into rectifiers: Surpassing human-level performance on imagenet classification. In Proceedings of the IEEE Conference on
+Computer Vision, pages 1026–1034, 2015.
+[109] Xavier Glorot and Yoshua Bengio. Understanding the difficulty of training deep feedforward neural networks. In Proceedings of the Thirteenth International Conference on Artificial Intelligence and
+Statistics, pages 249–256, 2010.
+[110] Priya Goyal, Piotr Dollár, Ross Girshick, Pieter Noordhuis, Lukasz Wesolowski, Aapo Kyrola, Andrew
+Tulloch, Yangqing Jia, and Kaiming He. Accurate, large minibatch sgd: Training imagenet in 1 hour.
+arXiv preprint arXiv:1706.02677, 2017.
+[111] Boris T Polyak and Anatoli B Juditsky. Acceleration of stochastic approximation by averaging. SIAM
+Journal on Control and Optimization, 30(4):838–855, 1992.
+[112] Jürgen Haas, Alessandro Barbato, Dario Behringer, Gabriel Studer, Steven Roth, Martino Bertoni,
+Khaled Mostaguir, Rafal Gumienny, and Torsten Schwede. Continuous automated model evaluation
+(cameo) complementing the critical assessment of structure prediction in casp12. Proteins: Structure,
+Function, and Bioinformatics, 86:387–398, 2018.
+[113] Andreas Griewank and Andrea Walther. Algorithm 799: revolve: an implementation of checkpointing
+for the reverse or adjoint mode of computational differentiation. ACM Transactions on Mathematical
+Software (TOMS), 26(1):19–45, 2000.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+60
+
+[114] Tianqi Chen, Bing Xu, Chiyuan Zhang, and Carlos Guestrin. Training deep nets with sublinear memory
+cost. arXiv preprint arXiv:1604.06174, 2016.
+[115] Nikita Kitaev, Łukasz Kaiser, and Anselm Levskaya. Reformer: The efficient transformer. In Proceedings of the International Conference on Learning Representations, 2020.
+[116] John Jumper, Richard Evans, Alexander Pritzel, Tim Green, Michael Figurnov, Kathryn Tunyasuvunakool, Olaf Ronneberger, Russ Bates, Augustin Žídek, Alex Bridgland, Clemens Meyer, Simon
+A A Kohl, Anna Potapenko, Andrew J Ballard, Andrew Cowie, Bernardino Romera-Paredes, Stanislav
+Nikolov, Rishub Jain, Jonas Adler, Trevor Back, Stig Petersen, David Reiman, Martin Steinegger,
+Michalina Pacholska, David Silver, Oriol Vinyals, Andrew W Senior, Koray Kavukcuoglu, Pushmeet
+Kohli, and Demis Hassabis. High accuracy protein structure prediction using deep learning. In Fourteenth Critical Assessment of Techniques for Protein Structure Prediction (Abstract Book), pages 22–24,
+2020.
+[117] Jianyi Yang, Ivan Anishchenko, Hahnbeom Park, Zhenling Peng, Sergey Ovchinnikov, and David
+Baker. Improved protein structure prediction using predicted interresidue orientations. Proceedings
+of the National Academy of Sciences of the United States of America, 117(3):1496–1503, 21 January
+2020.
+[118] Zilong Huang, Xinggang Wang, Lichao Huang, Chang Huang, Yunchao Wei, and Wenyu Liu. Ccnet: Criss-cross attention for semantic segmentation. In Proceedings of the IEEE/CVF International
+Conference on Computer Vision, pages 603–612, 2019.
+[119] Adam Zemla. LGA – a method for finding 3d similarities in protein structures. Nucleic Acids Research,
+31:3370–4, 08 2003.
+[120] Lisa Kinch, Andriy Kryshtafovych, and Nick Grishin. Target classification in the 14th round of the
+critical assessment of protein structure prediction (CASP14). https://predictioncenter.
+org/casp14/doc/presentations/2020_11_30_TargetClassification_Kinch_
+Updated.pdf, 2020. [Online; accessed 08-June-2021].
+[121] David M. Kern, Ben Sorum, Sonali S. Mali, Christopher M. Hoel, Savitha Sridharan, Jonathan P.
+Remis, Daniel B. Toso, Abhay Kotecha, Diana M. Bautista, and Stephen G. Brohawn. CryoEM structure of the SARS-CoV-2 3a ion channel in lipid nanodiscs.
+bioRxiv preprint
+bioRxiv:10.1101/2020.06.17.156554v3, 2021.
+[122] Jose M Dana, Aleksandras Gutmanas, Nidhi Tyagi, Guoying Qi, Claire O’Donovan, Maria Martin, and
+Sameer Velankar. SIFTS: updated structure integration with function, taxonomy and sequences resource
+allows 40-fold increase in coverage of structure-based annotations for proteins. Nucleic acids research,
+47(D1):D482–D489, 2019.
+[123] Jaina Mistry, Sara Chuguransky, Lowri Williams, Matloob Qureshi, Gustavo A Salazar, Erik LL
+Sonnhammer, Silvio CE Tosatto, Lisanna Paladin, Shriya Raj, Lorna J Richardson, et al. Pfam: The
+protein families database in 2021. Nucleic Acids Research, 49(D1):D412–D419, 2021.
+[124] Antonina Andreeva, Eugene Kulesha, Julian Gough, and Alexey G Murzin. The SCOP database in
+2020: expanded classification of representative family and superfamily domains of known protein structures. Nucleic acids research, 48(D1):D376–D382, 2020.
+[125] Ilya N Shindyalov and Philip E Bourne. Protein structure alignment by incremental combinatorial
+extension (CE) of the optimal path. Protein engineering, 11(9):739–747, 1998.
+
+Suppl. Material for Jumper et al. (2021): Highly accurate protein structure prediction with AlphaFold
+
+61
+
+[126] Sarthak Jain and Byron C Wallace. Attention is not Explanation. In Proceedings of the 2019 Conference
+of the North American Chapter of the Association for Computational Linguistics: Human Language
+Technologies, Volume 1 (Long and Short Papers), pages 3543–3556, Minneapolis, Minnesota, June 2019.
+Association for Computational Linguistics.
+[127] Sofia Serrano and Noah A Smith. Is attention interpretable? In Proceedings of the 57th Annual
+Meeting of the Association for Computational Linguistics, pages 2931–2951, Florence, Italy, July 2019.
+Association for Computational Linguistics.
+[128] Sarah Wiegreffe and Yuval Pinter. Attention is not not explanation. In Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference
+on Natural Language Processing (EMNLP-IJCNLP), pages 11–20, Hong Kong, China, November 2019.
+Association for Computational Linguistics.
+
+

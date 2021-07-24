@@ -57,6 +57,16 @@
 ** LOG
 ** ---
 * refs :ignore:noexport:
+[[./imgs/all-atom-coords-algo.png]]
+[[./imgs/backbone-update-algo.png]]
+[[./imgs/confidence-pLDDT-algo29.png]]
+[[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
+[[./imgs/generic-recycling-algo31.png]]
+[[./imgs/recycling-algo30.png]]
+[[./imgs/recycling-embedding-algo32.png]]
+[[./imgs/rename-truth-atoms-algo26.png]]
+[[./imgs/sidechain-backbonetorsion-loss-algo27.png]]
+[[./imgs/xaxis-transform-algo.png]]
 * snips :ignore:noexport:
 
 - [[https://rempellabs.com][rempellabs.com]] [coming soon] \\
@@ -64,9 +74,8 @@
 # * Writeup [0/0] :export:ignore:
 * --- :ignore:noexport:
 * Results :ignore:noexport:
-* Methods :ignore:noexport:
 * Supplemental figures :ignore:noexport:
-* Methods :ARCHIVE:noexport:
+* Methods :ignore:noexport:
 ** Model training and evaluation	
 * --- :ignore:noexport:
 * train todo
@@ -109,13 +118,13 @@ Willy Rempel
 *** Introduction
 
   #+begin_quote
-  Although all of the ideas in the model are doubtlessly clever, the main secret behind AlphaFold 2’s success is the superb deep learning engineering. A close look at the model reveals an architecture with a large amount of small details that seem fundamental for the performance of the network. As we admire the end product, we should not turn a blind eye to the enormous budget, and the large team of full-time, handsomely paid engineers that made it possible.
+  Although all of the ideas in the model are doubtlessly clever, the main secret behind AlphaFold 2’s success is the superb deep learning engineering. A close look at the model reveals an architecture with a large amount of small details that seem fundamental for the performance of the network. As we admire the end product, we should not turn a blind eye to the enormous budget, and the large team of full-time, handsomely paid engineers that made it possible.  cite:rubieraAlphaFoldHereWhat
   #+end_quote
-cite:rubieraAlphaFoldHereWhat
+
   #+begin_quote
-  This, and many other tricks, are described in exhaustive detail in the Supplementary Information. A reduced subset has been analysed in a brief ablation study, but ultimately, how important are each of the minor details is anybody’s guess.
+  This, and many other tricks, are described in exhaustive detail in the Supplementary Information. A reduced subset has been analysed in a brief ablation study, but ultimately, how important are each of the minor details is anybody’s guess.  cite:rubieraAlphaFoldHereWhat
   #+end_quote
-cite:rubieraAlphaFoldHereWhat
+
 (above blog post is recommended reading)
 *** Model Overview
 :PROPERTIES:
@@ -224,7 +233,7 @@ cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: height=\textheight
 [[./imgs/input_embeddings.png]]
 cite:jumperHighlyAccurateProtein2021
-
+** EvoFormer
 *** EvoFormer: Overview
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/model-evoformer-main.png]] 
@@ -265,23 +274,46 @@ cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/triangular-self-attention.png]]
 cite:jumperHighlyAccurateProtein2021
+** Structure Module
 *** Structure Module: Overview
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/model-structure.png]]
 cite:jumperHighlyAccurateProtein2021
-*** Structure Module: Overview
-- structure module rotation + translation transforms
-cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Frame Representation
 
+rotation + translation transforms $T_i := (R_i,t_i)$
+[[./imgs/TransformationMatrix1.png]]
+cite:SpatialTransformationMatrices
+
+They construct ground truth frames using the position of three atoms from the ground truth PDB structures using a Gram–Schmidt process (Algorithm 21)  cite:SpatialTransformationMatrices
 *** Structure Module: IPA
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/ipa.png]]
 cite:jumperHighlyAccurateProtein2021
-*** Auxillary Heads 
+*** Structure Module: Output
+
+- predicts backbone frames $T_i$ and torsion angles $α^f_i$
+- then computes atom coordinates by applying the torsion angles to the corresponding amino acid structure with idealized bond angles and bond lengths. We attach a local frame to each rigid group (see Table 2), such that the torsion axis
+is the x-axis, and store the ideal literature atom coordinates [97] for each amino acid relative to these frames
+in a table ~xlit
+r,f,a , where r ∈ {ALA, ARG, ASN, . . . } denotes the residue type, f ∈ Storsion names denotes the
+frame and a the atom name. We further pre-compute rigid transformations that transform atom coordinates
+lit
+from each frame to the frame that is higher up in the hierarchy. E.g. Tr,(χ
+maps atoms in amino-acid
+2 →χ1 )
+type r from the χ2 -frame to the χ1 -frame. As we are only predicting heavy atoms, the extra backbone rigid
+groups ω and φ do not contain atoms, but the corresponding frames contribute to the FAPE loss for alignment
+to the ground truth (like all other frames).
+
+** Final
 *** Loss Functions
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/loss-eq.png]]
 cite:jumperHighlyAccurateProtein2021
+
+- weighted sum
+- weighted to reduce importance of short sequences
 *** Loss Functions & Auxillary Heads
 1. Side chain and backbone torsion angle loss
 2. Frame aligned point error (FAPE)
@@ -296,12 +328,30 @@ cite:jumperHighlyAccurateProtein2021
 9. Structural violations
 cite:jumperHighlyAccurateProtein2021
 *** Loss Functions: FAPE
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/fape-algo.png]]
 cite:jumperHighlyAccurateProtein2021
 
+- Variation of commonly used root-mean-squared deviation (RMSD) of atomic positions
+- not invariant to reflections, preventing proteins of the wrong chirality. cite:rubieraAlphaFoldHereWhat, cite:jumperHighlyAccurateProtein2021
 * AlphaFold Inference
 *** AlphaFold Inference
 
-For inference, AlphaFold receives input features derived from the amino-acid sequence, MSA, and templates (see subsubsection 1.2.9) and outputs features including atom coordinates, the distogram, and per-residue confidence scores. Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
+- AlphaFold receives input features derived from:
+  - the amino-acid sequence
+  - MSA
+  - templates (see subsubsection 1.2.9)
+- outputs features:
+  - atom coordinates
+  - the distogram
+  - per-residue confidence scores.
+- Recycling x3
+  - initial recycled inputs are zero
+
+Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
+cite:jumperHighlyAccurateProtein2021
+*** AlphaFold Training
+[[./imgs/af-training-table.png]]
 cite:jumperHighlyAccurateProtein2021
 * Results 
 *** Results
