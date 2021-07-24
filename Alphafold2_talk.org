@@ -57,16 +57,6 @@
 ** LOG
 ** ---
 * refs :ignore:noexport:
-[[./imgs/all-atom-coords-algo.png]]
-[[./imgs/backbone-update-algo.png]]
-[[./imgs/confidence-pLDDT-algo29.png]]
-[[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
-[[./imgs/generic-recycling-algo31.png]]
-[[./imgs/recycling-algo30.png]]
-[[./imgs/recycling-embedding-algo32.png]]
-[[./imgs/rename-truth-atoms-algo26.png]]
-[[./imgs/sidechain-backbonetorsion-loss-algo27.png]]
-[[./imgs/xaxis-transform-algo.png]]
 * snips :ignore:noexport:
 
 - [[https://rempellabs.com][rempellabs.com]] [coming soon] \\
@@ -78,7 +68,7 @@
 * Methods :ignore:noexport:
 ** Model training and evaluation	
 * --- :ignore:noexport:
-* train todo
+* train todo :ignore:export:
 
 Predictions of side chain chi angles as well as the final, per-residue accuracy of the structure (pLDDT) are computed with small per-residue networks on the final activations at the end of the network.
 The estimate of the TM-score (pTM) is obtained from a pairwise error prediction that is computed as a linear projection from the final pair representation.
@@ -135,7 +125,7 @@ Willy Rempel
 cite:jumperHighlyAccurateProtein2021
 * Data Pipeline
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: height=.2\textheight
+#+ATTR_LATEX: height=0.2\textheight
 [[./imgs/mmcif-eg.png]]
 cite:jumperHighlyAccurateProtein2021
 
@@ -209,10 +199,10 @@ cite:jumperHighlyAccurateProtein2021
 - *msa_feat*
   This is a feature of size [Nclust, Nres, 49] constructed by concatenating “cluster_msa”, “cluster_has_deletion”, “cluster_deletion_value”, “cluster_deletion_mean”, “cluster_profile”. We draw Ncycle×Nensemble random samples from this feature to provide each recycling/ensembling iteration of the network with a different sample (see subsubsection 1.11.2).
 - *extra_msa_feat*
-  This is a feature of size [Nextra_seq, Nres, 25] constructed by concatenating “extra_msa”, “extra_msa_has_deletion”, “extra_msa_deletion_value”. Together with “msa_feat’ above we also draw Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2).
+  This is a feature of size [Nextra_seq, Nres, 25] constructed by concatenating “extra_msa”, “extra_msa_has_deletion”, “extra_msa_deletion_value”. Together with “msa_feat’ above we also draw Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2). cite:jumperHighlyAccurateProtein2021
+*** Featurization and model inputs
 - *template_pair_feat*
-  This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. The “template_aatype” feature is included via tiling and stack- ing (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. - template_angle_feat This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”.
-cite:jumperHighlyAccurateProtein2021
+  This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. The “template_aatype” feature is included via tiling and stack- ing (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. - template_angle_feat This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”. cite:jumperHighlyAccurateProtein2021
 
 *** Self-distillation dataset
 
@@ -290,11 +280,23 @@ They construct ground truth frames using the position of three atoms from the gr
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/ipa.png]]
 cite:jumperHighlyAccurateProtein2021
-*** Structure Module: Output
+*** Structure Module: Algorithm Part 1
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo20-part1.png]]
+cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Algorithm Part 2
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo20-part2.png]]
+cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Algorithm Part 3
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo20-part3.png]]
+cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Output :ignore:noexport:ARCHIVE:
 
 - predicts backbone frames $T_i$ and torsion angles $α^f_i$
-- then computes atom coordinates by applying the torsion angles to the corresponding amino acid structure with idealized bond angles and bond lengths. We attach a local frame to each rigid group (see Table 2), such that the torsion axis
-is the x-axis, and store the ideal literature atom coordinates [97] for each amino acid relative to these frames
+- then computes atom coordinates by applying the torsion angles to the corresponding amino acid structure with idealized bond angles and bond lengths.
+- We attach a local frame to each rigid group (see Table 2), such that the torsion axis is the x-axis, and store the ideal literature atom coordinates [97] for each amino acid relative to these frames
 in a table ~xlit
 r,f,a , where r ∈ {ALA, ARG, ASN, . . . } denotes the residue type, f ∈ Storsion names denotes the
 frame and a the atom name. We further pre-compute rigid transformations that transform atom coordinates
@@ -305,6 +307,7 @@ maps atoms in amino-acid
 type r from the χ2 -frame to the χ1 -frame. As we are only predicting heavy atoms, the extra backbone rigid
 groups ω and φ do not contain atoms, but the corresponding frames contribute to the FAPE loss for alignment
 to the ground truth (like all other frames).
+cite:jumperHighlyAccurateProtein2021
 
 ** Final
 *** Loss Functions
@@ -391,3 +394,34 @@ cite:jumperHighlyAccurateProtein2021
   :END:      
   
 \printbibliography
+* More Material 
+** More Material 
+#+ATTR_LATEX: height=\textheight
+[[./imgs/all-atom-coords-algo.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/backbone-update-algo.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/confidence-pLDDT-algo29.png]]
+** More Material 
+#+ATTR_LATEX: height=\textheight
+[[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/generic-recycling-algo31.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/recycling-algo30.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/recycling-embedding-algo32.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/rename-truth-atoms-algo26.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/sidechain-backbonetorsion-loss-algo27.png]]
+** More Material 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/xaxis-transform-algo.png]]
