@@ -21,10 +21,12 @@
 #+COLUMNS: %45ITEM %10BEAMER_ENV(Env) %10BEAMER_ACT(Act) %4BEAMER_COL(Col) %8BEAMER_OPT(Opt)
 #+BEAMER_FRAME_LEVEL: 3
 #+BEAMER_THEME: Rochester 
-#+BEAMER_COLOR_THEME: cormorant
+#+BEAMER_COLOR_THEME: dolphin
 #+BEAMER_HEADER: \graphicspath{{./imgs/}}
 #+LATEX_HEADER: \beamertemplatenavigationsymbolsempty
 #+LATEX_HEADER: \setbeamertemplate{headline}{}
+#+LATEX_HEADER: \setbeamersize{text margin left=0pt,text margin right=0pt}
+
 
 #+LATEX_HEADER: \usepackage{amsmath, amsthm, amssymb}
 #+LATEX_HEADER: \usepackage{verbatim, appendix}
@@ -44,10 +46,10 @@
 #+LaTeX_HEADER: \setbeamertemplate{bibliography item}{\insertbiblabel}
 #+LaTeX_HEADER: \AtEveryBibitem{\clearfield{note}}
 
-#+LaTeX_HEADER: \bibliography{/home/will/Documents/2Research/1RefsMeta/Zotero.bib} 
+#+LaTeX_HEADER: \bibliography{./AlphafoldTalk2021.bib} 
 #+LATEX: \maketitle
-# bibliography:/home/will/Documents/2Research/1RefsMeta/Zotero.bib
-/home/will/Documents/2Research/1RefsMeta/Zotero.bib
+# bibliography:./AlphafoldTalk2021.bib
+./AlphafoldTalk2021.bib
 \setbeamerfont{large}{size=\large}
 
 
@@ -82,19 +84,133 @@ Willy Rempel
 - BSc Mathematics \\ 
 - Research Associate, AISC \\
 - seeking opportunities in the field 
-*** Authors 
-*** Context: Stages of gene expression
-#+ATTR_LATEX: :scale 0.4
-[[./imgs/gene-reg.png]]
-cite:RegulationGeneExpression2021
-* Methods	
-** Model architecture	
+*** Introduction
+
+  #+begin_quote
+  Although all of the ideas in the model are doubtlessly clever, the main secret behind AlphaFold 2’s success is the superb deep learning engineering. A close look at the model reveals an architecture with a large amount of small details that seem fundamental for the performance of the network. As we admire the end product, we should not turn a blind eye to the enormous budget, and the large team of full-time, handsomely paid engineers that made it possible.
+  #+end_quote
+cite:rubieraAlphaFoldHereWhat
+  #+begin_quote
+  This, and many other tricks, are described in exhaustive detail in the Supplementary Information. A reduced subset has been analysed in a brief ablation study, but ultimately, how important are each of the minor details is anybody’s guess.
+  #+end_quote
+cite:rubieraAlphaFoldHereWhat
+
+*** Model Overview
+:PROPERTIES:
+:ID:       bef85d4f-05c7-425e-815f-b0698c0ff51a
+:END:
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/model-overview.png]] 
+cite:jumperHighlyAccurateProtein2021
+* Data Pipeline
+*** Initial Input: mmCIF or FASTA files
+#+ATTR_LATEX: height=0.8*\textheight
+[[./imgs/mmcif-eg.png]]
+cite:jumperHighlyAccurateProtein2021
+
+*** Initial Input: mmCIF or FASTA files
+#+ATTR_LATEX: height=0.9*\textheight
+[[./imgs/fastafiles_2021-07-20.png]]
+cite:jumperHighlyAccurateProtein2021
+
+*** Parsing
+
+cite:jumperHighlyAccurateProtein2021
+*** Genetic Search
+cite:jumperHighlyAccurateProtein2021
+*** Template Search
+cite:jumperHighlyAccurateProtein2021
+*** Training Data
+cite:jumperHighlyAccurateProtein2021
+*** Filtering
+cite:jumperHighlyAccurateProtein2021
+*** MSA block deletion
+cite:jumperHighlyAccurateProtein2021
+*** MSA clustering
+cite:jumperHighlyAccurateProtein2021
+*** Residue cropping
+cite:jumperHighlyAccurateProtein2021
+*** Featurization and model inputs
+cite:jumperHighlyAccurateProtein2021
+
+* Model Architecture	
+** wut
+*** Input embeddings
+#+ATTR_LATEX: height=\textheight
+[[./imgs/input_embeddings.png]]
+cite:jumperHighlyAccurateProtein2021
+
+*** EvoFormer: Overview
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/model-evoformer-main.png]] 
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: Rowwise Gated Attention
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/rowwise-gated-attention.png]]
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: Column wise Gated Attention
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/columnwise-gated-attention.png]]
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: MSA Translation Layer
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/msa-translation-layer.png]]
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: Outer-Product Mean
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/outer-product-mean.png]]
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: Residue Pairs
+#+ATTR_LATEX: :scale 0.25
+[[./imgs/model-evoformer-pair1.png]]
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/model-evoformer-pair2.png]]
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: Triangular Multiplicative Update
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/triangular-mult-update.png]]
+cite:jumperHighlyAccurateProtein2021
+*** EvoFormer: Triangular Self-Attention
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/triangular-self-attention.png]]
+cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Overview
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/model-structure.png]]
+cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Overview
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/ipa.png]]
+cite:jumperHighlyAccurateProtein2021
+* Methods :ARCHIVE:
 ** Model training and evaluation	
 * Results 
 *** Results
-*** Results II
+cite:jumperHighlyAccurateProtein2021
+*** Results
+cite:jumperHighlyAccurateProtein2021
 *** Results: Positional Encodings 
-*** Ablation Study
+cite:jumperHighlyAccurateProtein2021
+*** Novel Folds
+cite:jumperHighlyAccurateProtein2021
+*** Ablation Studies
+Baseline for all ablation models: Full model without noisy-student self-attention  
+Ablations:
+1. With noisy-student self-distillation training
+2. No templates
+3. No raw MSA (use MSA pairwise frequencies)
+4. No triangles, biasing, or gating (use axial attention)
+5. No recycling
+6. No IPA (use direct projection)
+7. No invariant IPA & no recycling
+8. No end-to-end structure gradients (keep auxiliary heads)
+9. No auxiliary distogram head
+10. No auxiliary masked MSA head
+cite:jumperHighlyAccurateProtein2021
+*** Network Probing
+cite:jumperHighlyAccurateProtein2021
+*** Attention Visualization
+cite:jumperHighlyAccurateProtein2021
 *** 
   :PROPERTIES:
   :BEAMER_OPT: fragile,allowframebreaks,label=
