@@ -52,23 +52,10 @@
 
 \setbeamerfont{large}{size=\large}
 
-
-* START [0/0] :ignore:noexport:
+* START [0/1] :ignore:noexport:
 ** LOG
 ** ---
-* refs :ignore:noexport:
-* snips :ignore:noexport:
-
-- [[https://rempellabs.com][rempellabs.com]] [coming soon] \\
-* CODE [0/0] :ignore:noexport:
-# * Writeup [0/0] :export:ignore:
-* --- :ignore:noexport:
-* Results :ignore:noexport:
-* Supplemental figures :ignore:noexport:
-* Methods :ignore:noexport:
-** Model training and evaluation	
-* --- :ignore:noexport:
-* train todo :ignore:export:
+** [.] train todo 
 
 Predictions of side chain chi angles as well as the final, per-residue accuracy of the structure (pLDDT) are computed with small per-residue networks on the final activations at the end of the network.
 The estimate of the TM-score (pTM) is obtained from a pairwise error prediction that is computed as a linear projection from the final pair representation.
@@ -87,7 +74,18 @@ to interpret phylogenetic and covariation relationships without hardcoding a par
 objective is trained jointly with the normal PDB structure loss on the
 same training examples and is not pre-trained, in contrast to recent
 independent work38.
-* ---
+* refs :ignore:noexport:
+* snips :ignore:noexport:
+
+- [[https://rempellabs.com][rempellabs.com]] [coming soon] \\
+* CODE [0/0] :ignore:noexport:
+# * Writeup [0/0] :export:ignore:
+* --- :ignore:noexport:
+* Results :ignore:noexport:
+* Supplemental figures :ignore:noexport:
+* Methods :ignore:noexport:
+** Model training and evaluation	
+* --- :ignore:noexport:
 * Introduction 
 *** Introduction
 **** :B_ignoreheading:BMCOL:
