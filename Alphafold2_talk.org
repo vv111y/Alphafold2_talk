@@ -270,6 +270,7 @@ cite:jumperHighlyAccurateProtein2021
 *** Structure Module: Frame Representation
 
 rotation + translation transforms $T_i := (R_i,t_i)$
+#+ATTR_LATEX: :scale 0.6
 [[./imgs/TransformationMatrix1.png]]
 cite:SpatialTransformationMatrices
 
@@ -283,7 +284,7 @@ cite:jumperHighlyAccurateProtein2021
 [[./imgs/algo20-part1.png]]
 cite:jumperHighlyAccurateProtein2021
 *** Structure Module: Algorithm Part 2
-#+ATTR_LATEX: width=\textwidth
+#+ATTR_LATEX: height=\textheight
 [[./imgs/algo20-part2.png]]
 cite:jumperHighlyAccurateProtein2021
 *** Structure Module: Algorithm Part 3
