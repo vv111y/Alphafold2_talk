@@ -170,17 +170,27 @@ flags:
   * Sequences are filtered out when any single amino acid accounts for more than 80% of the input primary sequence. This filter removes about 0.8% of sequences.
 
 *** MSA block deletion cite:jumperHighlyAccurateProtein2021
-- MSAs grouped by tool, sorted by block output? (e-value?)
-  - similar sequences are likely to be adjacent
-  - block deletion tends to remove similarities (ie. whole branch phylogeny)
+- Block deletion tends to remove similarities (ie. whole branch phylogeny) and promote diversity
+  - Similar sequences are likely to be adjacent
+  - Contiguous blocks in MSAs are deleted.
+  - First MSAs are grouped by tool
+  - Then sorted according to tool defaults (usually e-value)
 
 *** MSA clustering cite:jumperHighlyAccurateProtein2021
+
 - Similarity clusters used to randomly select subset of MSA sequences 
   - to reduce computational cost from attention modules, reduce $N_seq$
+- Modified K-means is used, with the input sequence used as first cluster center
 
-1. K-means, input sequence used as first cluster center
-2. masking
-3. hamming distance measure for remaining selections
+
+1. $N_{clust}$ centers selected from MSA
+2. Generate a mask where /p=0.15/ that any position is selected by the mask
+3. Each center is modified for each mask selected residue according to:
+   1. /p=0.1/ replaced with a uniformly sampled random amino acid
+   2. /p=0.1/ replaced with an amino acid sampled from the MSA profile
+   3. /p=0.1/ no replacement
+   4. /p=0.7/ replaced with a special token (masked_msa_token)
+4. hamming distance measure for remaining selections
 
 *** Residue cropping cite:jumperHighlyAccurateProtein2021
 During training:
@@ -387,6 +397,9 @@ todo
 todo
 
 * Algorithms
+*** Algorithm 1 Block delete cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo1_blockdelete.png]]
 *** Algorithm 23 Backbone update cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/backbone-update-algo.png]]
