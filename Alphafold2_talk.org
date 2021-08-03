@@ -176,6 +176,9 @@ flags:
   - First MSAs are grouped by tool
   - Then sorted according to tool defaults (usually e-value)
 
+*** Algorithm 1 MSA Block deletion cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo1_blockdelete.png]]
 *** MSA clustering cite:jumperHighlyAccurateProtein2021
 
 - Similarity clusters used to randomly select subset of MSA sequences 
@@ -210,6 +213,14 @@ During training:
 - *template_pair_feat*
   This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. The “template_aatype” feature is included via tiling and stack- ing (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. - template_angle_feat This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”. 
 
+*** Table 1 Input Features (1/2) cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/table1_inputs_1.png]]
+*** Table 1 Input Features (2/2) cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/table1_inputs_2.png]]
+
+
 *** Self-distillation dataset cite:jumperHighlyAccurateProtein2021
 
 - Build dataset (on unlabeled sequences):
@@ -224,11 +235,44 @@ During training:
   - reference distribution
 - self-distillation training took ~2 weeks
 
+* AlphaFold Inference
+*** AlphaFold Inference cite:jumperHighlyAccurateProtein2021
+
+- AlphaFold receives input features derived from:
+  - the amino-acid sequence
+  - MSA
+  - templates (see subsubsection 1.2.9)
+- outputs features:
+  - atom coordinates
+  - the distogram
+  - per-residue confidence scores.
+- Recycling x3
+  - initial recycled inputs are zero
+
+Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
+
+*** Algorithm 2 Model Inference cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo2_cut_part1.png]]
+*** Algorithm 2 Model Inference cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo2_cut_part2.png]]
+*** AlphaFold Training cite:jumperHighlyAccurateProtein2021
+[[./imgs/af-training-table.png]]
 * Model Architecture	
 *** Input embeddings cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: :height \textheight
 [[./imgs/input_embeddings.png]]
-cite:jumperHighlyAccurateProtein2021
+*** Algorithm 3 Input embeddings cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo3_input_embed.png]]
+*** Algorithm 4 Relative positional encoding cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo4_pos_encoding.png]]
+*** Algorithm 5 One-hot encoding with nearest bin cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo5_1hot_bin_encode.png]]
+
 ** EvoFormer
 *** EvoFormer: Overview cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
@@ -238,25 +282,44 @@ cite:jumperHighlyAccurateProtein2021
 - cast as a graph inference problem
 - cross-optimization and information flow between MSA representation and pair-wise representation
 - layer normalization
+*** Algorithm 6 EvoFormer stack cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo6_evoformer.png]]
 
 *** EvoFormer: Row wise Gated Attention cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/rowwise-gated-attention.png]]
 
+*** Algorithm 7 Row wise Gated Attention cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo7_evo_row_attention.png]]
+
 *** EvoFormer: Column wise Gated Attention cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/columnwise-gated-attention.png]]
+
+*** Algorithm 8 Column wise Gated Attention cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo8_evo_col_attention.png]]
 
 *** EvoFormer: MSA Translation Layer cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/msa-translation-layer.png]]
 
+*** Algorithm 9 MSA Translation Layer cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo9_msa_transition.png]]
+
 *** EvoFormer: Outer-Product Mean cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/outer-product-mean.png]]
 
+*** Algorithm 10 Outer-Product Mean cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo10_outer_product.png]]
+
 *** EvoFormer: Residue Pairs cite:jumperHighlyAccurateProtein2021
-#+ATTR_LATEX: :scale 0.25
+#+ATTR_LATEX: height=0.2
 [[./imgs/model-evoformer-pair1.png]]
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/model-evoformer-pair2.png]]
@@ -265,9 +328,43 @@ cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/triangular-mult-update.png]]
 
+*** Algorithm 11 Triangular Multiplicative Update: outward cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo11_triangular_out.png]]
+
+*** Algorithm 12 Triangular Multiplicative Update: inward cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo12_triangular_in.png]]
+
 *** EvoFormer: Triangular Self-Attention cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/triangular-self-attention.png]]
+*** Algorithm 13 Triangular Self-Attention: start cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo13_triangular_attention_start.png]]
+
+*** Algorithm 14 Triangular Self-Attention: end  cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo14_triangular_end.png]]
+
+*** Algorithm 15 Transition layer in the pair stack cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo15_pair_transition.png]]
+
+*** Algorithm 16 Template pair stack cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo16_template_pair_stack.png]]
+*** Algorithm 17 Template pointwise attention cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo17_template_point_attention.png]]
+
+*** Algorithm 18 Extra MSA stack cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo18_extra_msa_stack.png]]
+
+*** Algorithm 19 MSA global column-wise gated self-attention cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo19_msa_global_col_attention.png]]
 
 ** Structure Module
 *** Structure Module: Overview cite:jumperHighlyAccurateProtein2021
@@ -276,13 +373,13 @@ cite:jumperHighlyAccurateProtein2021
 
 *** Structure Module: Frame Representation 
 
-#+ATTR_LATEX: height=\textheight :caption {Example transform cite:SpatialTransformationMatrices}
+#+ATTR_LATEX: height=0.3 :caption {Example transform cite:SpatialTransformationMatrices}
 [[./imgs/TransformationMatrix1.png]]
 
 - rotation + translation transforms $T_i := (R_i,t_i)$
 - no reflection, scaling, or shear
 - they construct ground truth frames using the position of three atoms from the ground truth PDB structures using a Gram–Schmidt process (Algorithm 21)
-*** Structure Module: IPA cite:jumperHighlyAccurateProtein2021
+*** Structure Module: Invariant point attention (IPA) cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/ipa.png]]
 
@@ -298,6 +395,36 @@ cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo20-part3.png]]
 
+*** Table 2 Rigid atomic groups from torsion angles cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/table2_rigid_atom_groups.png]]
+
+*** Algorithm 21 Frame construction from ground truth atom positions cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo21_gram_schmidt.png]]
+*** Algorithm 22 Invariant point attention (IPA) cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/algo22_ipa.png]]
+
+*** Algorithm 23 Backbone update cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo23_backbone-update.png]]
+*** Algorithm 24 Compute all atom coordinates cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: height=0.9\textheight :caption 
+[[./imgs/algo24_all-atom-coords-algo.png]]
+*** Algorithm 25 Make a transformation that rotates around the x-axis cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo25_xaxis-transform.png]]
+*** Table 3 Ambiguous atom renaming swaps cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height \textheight
+[[./imgs/table3_atom_renaming.png]]
+
+*** Algorithm 26 Rename symmetric ground truth atoms cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo26_rename-truth-atoms.png]]
+*** Distograms cite:jumperHighlyAccurateProtein2021
+#+ATTR_LATEX: :height \textheight
+[[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
 *** Structure Module: Output :ignore:noexport:ARCHIVE:
 
 - predicts backbone frames $T_i$ and torsion angles $α^f_i$
@@ -315,6 +442,7 @@ groups ω and φ do not contain atoms, but the corresponding frames contribute t
 to the ground truth (like all other frames).
 cite:jumperHighlyAccurateProtein2021
 
+*** [.] Amber Relaxation
 ** Final
 *** Loss Functions  cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
@@ -339,40 +467,35 @@ cite:jumperHighlyAccurateProtein2021
 *** Loss Functions: FAPE 
 
 #+ATTR_LATEX: width=\textwidth :caption {Algorithm 28 cite:jumperHighlyAccurateProtein2021}
-[[./imgs/fape-algo.png]]
+[[./imgs/algo28_fape.png]]
 
 
 - Variation of commonly used root-mean-squared deviation (RMSD) of atomic positions
 - not invariant to reflections, preventing proteins of the wrong chirality. cite:rubieraAlphaFoldHereWhat, cite:jumperHighlyAccurateProtein2021
   
-* AlphaFold Inference
-*** AlphaFold Inference cite:jumperHighlyAccurateProtein2021
-
-- AlphaFold receives input features derived from:
-  - the amino-acid sequence
-  - MSA
-  - templates (see subsubsection 1.2.9)
-- outputs features:
-  - atom coordinates
-  - the distogram
-  - per-residue confidence scores.
-- Recycling x3
-  - initial recycled inputs are zero
-
-Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
-
-*** AlphaFold Training cite:jumperHighlyAccurateProtein2021
-[[./imgs/af-training-table.png]]
-
+*** Algorithm 27 Side chain and backbone torsion angle loss cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo27_sidechain-backbonetorsion-loss.png]]
+*** Algorithm 29 Predict model confidence pLDDT cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo29_confidence-pLDDT.png]]
+*** Algorithm 30 Generic recycling inference procedure cite:jumperHighlyAccurateProtein2021  
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo30_recycling.png]]
+*** Algorithm 31 Generic recycling training procedure cite:jumperHighlyAccurateProtein2021  
+#+ATTR_LATEX: height=\textheight
+[[./imgs/algo31_generic-recycling.png]]
+*** Algorithm 32 Embedding of evoformer and structure module outputs for recycling cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: height=\textheight
+[[./imgs/algo32_recycling-embedding.png]]
+** Training & Inference Details
+** Recycling Iterations
 * Results 
 *** Results cite:jumperHighlyAccurateProtein2021
 They did well
 
-*** Results cite:jumperHighlyAccurateProtein2021
+*** CASP14 Assessment cite:jumperHighlyAccurateProtein2021
 They did well
-
-*** Results: Positional Encodings cite:jumperHighlyAccurateProtein2021
-
 *** Novel Folds
 They did well
 
@@ -396,40 +519,9 @@ todo
 *** Attention Visualization cite:jumperHighlyAccurateProtein2021
 todo
 
-* Algorithms
-*** Algorithm 1 Block delete cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/algo1_blockdelete.png]]
-*** Algorithm 23 Backbone update cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/backbone-update-algo.png]]
-*** Algorithm 24 Compute all atom coordinates cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: height=0.9\textheight :caption 
-[[./imgs/all-atom-coords-algo.png]]
-*** Algorithm 25 Make a transformation that rotates around the x-axis cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/xaxis-transform-algo.png]]
-*** Algorithm 26 Rename symmetric ground truth atoms cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/rename-truth-atoms-algo26.png]]
-*** Algorithm 27 Side chain and backbone torsion angle loss cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/sidechain-backbonetorsion-loss-algo27.png]]
-*** Algorithm 29 Predict model confidence pLDDT cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/confidence-pLDDT-algo29.png]]
-*** Algorithm 30 Generic recycling inference procedure cite:jumperHighlyAccurateProtein2021  
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/recycling-algo30.png]]
-*** Algorithm 31 Generic recycling training procedure cite:jumperHighlyAccurateProtein2021  
-#+ATTR_LATEX: height=\textheight
-[[./imgs/generic-recycling-algo31.png]]
-*** Algorithm 32 Embedding of evoformer and structure module outputs for recycling cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: height=\textheight
-[[./imgs/recycling-embedding-algo32.png]]
-*** Distograms cite:jumperHighlyAccurateProtein2021
-#+ATTR_LATEX: :height \textheight
-[[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
+*** Additional Results cite:jumperHighlyAccurateProtein2021
+todo
+
 * Biblio
 *** Bibliography
   :PROPERTIES:
