@@ -123,13 +123,13 @@ Willy Rempel
 
 * Data Pipeline
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: height=0.2\textheight
+#+ATTR_LATEX: :height 0.8\textheight :caption {Example mmCIF file}
 [[./imgs/mmcif-eg.png]]
 
 see cite:PDB101LearnGuide for full guide
 
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: height=0.9*\textheight
+#+ATTR_LATEX: height=0.9*\textheight :caption {Example FASTA file}
 [[./imgs/fastafiles_2021-07-20.png]]
 
 *** Parsing cite:jumperHighlyAccurateProtein2021
@@ -137,7 +137,7 @@ see cite:PDB101LearnGuide for full guide
 - only certain metadata (more from mmCIF)
 - change MSE residues into MET
 
-*** Genetic Search cite:jumperHighlyAccurateProtein2021
+*** [.] Genetic Search cite:jumperHighlyAccurateProtein2021
 For MSAs
 - JackHMMER
   - MGnify: MSA depth 5,000
@@ -146,9 +146,11 @@ For MSAs
   - Uniclust30 + BFD: MSA depth unlimited
 - MSAs duplicated and stacked
 
+#+begin_quote
 flags:
   JackHMMER: -N 1 -E 0.0001 --incE 0.0001 --F1 0.0005 --F2 0.00005 --F3 0.0000005.
   HHBlits: -n 3 -e 0.001 -realign_max 100000 -maxfilt 100000 -min_prefilter_hits 1000 -maxseq 1000000.
+#+end_quote
 
 *** Template Search cite:jumperHighlyAccurateProtein2021
 - UniRef90 MSA from prior search used for PDB70 search using HHSearch.
@@ -178,14 +180,14 @@ flags:
 
 *** Algorithm 1 MSA Block deletion cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: width=\textwidth
-[[./imgs/algo1_blockdelete.png]]
+[[./imgs/algo1_block_deletion.png]]
 *** MSA clustering cite:jumperHighlyAccurateProtein2021
 
 - Similarity clusters used to randomly select subset of MSA sequences 
   - to reduce computational cost from attention modules, reduce $N_seq$
 - Modified K-means is used, with the input sequence used as first cluster center
 
-
+Clustering Algorithm:
 1. $N_{clust}$ centers selected from MSA
 2. Generate a mask where /p=0.15/ that any position is selected by the mask
 3. Each center is modified for each mask selected residue according to:
@@ -200,7 +202,7 @@ During training:
 1. unclamped & clamped - sampling start index from uniform distributions
 2. Cropped with fixed size $N_res$
 
-*** Featurization and model inputs cite:jumperHighlyAccurateProtein2021
+*** [.] Featurization and model inputs cite:jumperHighlyAccurateProtein2021
 - *target_feat*
   This is a feature of size [Nres, 21] consisting of the “aatype” feature.
 - *residue_index*
@@ -209,17 +211,16 @@ During training:
   This is a feature of size [Nclust, Nres, 49] constructed by concatenating “cluster_msa”, “cluster_has_deletion”, “cluster_deletion_value”, “cluster_deletion_mean”, “cluster_profile”. We draw Ncycle×Nensemble random samples from this feature to provide each recycling/ensembling iteration of the network with a different sample (see subsubsection 1.11.2).
 - *extra_msa_feat*
   This is a feature of size [Nextra_seq, Nres, 25] constructed by concatenating “extra_msa”, “extra_msa_has_deletion”, “extra_msa_deletion_value”. Together with “msa_feat’ above we also draw Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2).
-*** Featurization and model inputs cite:jumperHighlyAccurateProtein2021
+*** [.] Featurization and model inputs cite:jumperHighlyAccurateProtein2021
 - *template_pair_feat*
   This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. The “template_aatype” feature is included via tiling and stack- ing (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. - template_angle_feat This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”. 
 
 *** Table 1 Input Features (1/2) cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.8\textheight
 [[./imgs/table1_inputs_1.png]]
 *** Table 1 Input Features (2/2) cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.8\textheight
 [[./imgs/table1_inputs_2.png]]
-
 
 *** Self-distillation dataset cite:jumperHighlyAccurateProtein2021
 
@@ -233,7 +234,7 @@ During training:
   - use this model to predict above set
   - for every residue pair, computer confidence metric using KL-divergence between distance distribution and a reference distribution
   - reference distribution
-- self-distillation training took ~2 weeks
+- self-distillation training took roughly 2 weeks
 
 * AlphaFold Inference
 *** AlphaFold Inference cite:jumperHighlyAccurateProtein2021
@@ -252,25 +253,26 @@ During training:
 Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
 
 *** Algorithm 2 Model Inference cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo2_cut_part1.png]]
 *** Algorithm 2 Model Inference cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo2_cut_part2.png]]
 *** AlphaFold Training cite:jumperHighlyAccurateProtein2021
-[[./imgs/af-training-table.png]]
+[[./imgs/table4_model_training.png]]
 * Model Architecture	
 *** Input embeddings cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/input_embeddings.png]]
 *** Algorithm 3 Input embeddings cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: width \textwidth
+
 [[./imgs/algo3_input_embed.png]]
 *** Algorithm 4 Relative positional encoding cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: width \textwidth
 [[./imgs/algo4_pos_encoding.png]]
 *** Algorithm 5 One-hot encoding with nearest bin cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: width \textwidth
 [[./imgs/algo5_1hot_bin_encode.png]]
 
 ** EvoFormer
@@ -283,7 +285,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 - cross-optimization and information flow between MSA representation and pair-wise representation
 - layer normalization
 *** Algorithm 6 EvoFormer stack cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo6_evoformer.png]]
 
 *** EvoFormer: Row wise Gated Attention cite:jumperHighlyAccurateProtein2021
@@ -291,7 +293,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/rowwise-gated-attention.png]]
 
 *** Algorithm 7 Row wise Gated Attention cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo7_evo_row_attention.png]]
 
 *** EvoFormer: Column wise Gated Attention cite:jumperHighlyAccurateProtein2021
@@ -299,7 +301,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/columnwise-gated-attention.png]]
 
 *** Algorithm 8 Column wise Gated Attention cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo8_evo_col_attention.png]]
 
 *** EvoFormer: MSA Translation Layer cite:jumperHighlyAccurateProtein2021
@@ -307,7 +309,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/msa-translation-layer.png]]
 
 *** Algorithm 9 MSA Translation Layer cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :width \textwidth
 [[./imgs/algo9_msa_transition.png]]
 
 *** EvoFormer: Outer-Product Mean cite:jumperHighlyAccurateProtein2021
@@ -315,13 +317,13 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/outer-product-mean.png]]
 
 *** Algorithm 10 Outer-Product Mean cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :width \textwidth
 [[./imgs/algo10_outer_product.png]]
 
 *** EvoFormer: Residue Pairs cite:jumperHighlyAccurateProtein2021
-#+ATTR_LATEX: height=0.2
+#+ATTR_LATEX: :scale 0.2
 [[./imgs/model-evoformer-pair1.png]]
-#+ATTR_LATEX: width=\textwidth
+#+ATTR_LATEX: :scale 0.15
 [[./imgs/model-evoformer-pair2.png]]
 
 *** EvoFormer: Triangular Multiplicative Update cite:jumperHighlyAccurateProtein2021
@@ -329,41 +331,44 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/triangular-mult-update.png]]
 
 *** Algorithm 11 Triangular Multiplicative Update: outward cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: width \textwidth
 [[./imgs/algo11_triangular_out.png]]
 
 *** Algorithm 12 Triangular Multiplicative Update: inward cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: width \textwidth
+
 [[./imgs/algo12_triangular_in.png]]
 
 *** EvoFormer: Triangular Self-Attention cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/triangular-self-attention.png]]
 *** Algorithm 13 Triangular Self-Attention: start cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo13_triangular_attention_start.png]]
 
 *** Algorithm 14 Triangular Self-Attention: end  cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo14_triangular_end.png]]
 
 *** Algorithm 15 Transition layer in the pair stack cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :width \textwidth
+
 [[./imgs/algo15_pair_transition.png]]
 
 *** Algorithm 16 Template pair stack cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :width \textwidth
+
 [[./imgs/algo16_template_pair_stack.png]]
 *** Algorithm 17 Template pointwise attention cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :width \textwidth
 [[./imgs/algo17_template_point_attention.png]]
 
 *** Algorithm 18 Extra MSA stack cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo18_extra_msa_stack.png]]
 
 *** Algorithm 19 MSA global column-wise gated self-attention cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo19_msa_global_col_attention.png]]
 
 ** Structure Module
@@ -373,7 +378,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 
 *** Structure Module: Frame Representation 
 
-#+ATTR_LATEX: height=0.3 :caption {Example transform cite:SpatialTransformationMatrices}
+#+ATTR_LATEX: :scale 0.3 :caption {Example transform cite:SpatialTransformationMatrices}
 [[./imgs/TransformationMatrix1.png]]
 
 - rotation + translation transforms $T_i := (R_i,t_i)$
@@ -388,7 +393,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/algo20-part1.png]]
 
 *** Structure Module: Algorithm Part 2 cite:jumperHighlyAccurateProtein2021
-#+ATTR_LATEX: width=\textwidth
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo20-part2.png]]
 
 *** Structure Module: Algorithm Part 3 cite:jumperHighlyAccurateProtein2021
@@ -396,34 +401,34 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/algo20-part3.png]]
 
 *** Table 2 Rigid atomic groups from torsion angles cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/table2_rigid_atom_groups.png]]
 
 *** Algorithm 21 Frame construction from ground truth atom positions cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo21_gram_schmidt.png]]
 *** Algorithm 22 Invariant point attention (IPA) cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/algo22_ipa.png]]
 
 *** Algorithm 23 Backbone update cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo23_backbone-update.png]]
 *** Algorithm 24 Compute all atom coordinates cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: height=0.9\textheight :caption 
+#+ATTR_LATEX: :height 0.9\textheight 
 [[./imgs/algo24_all-atom-coords-algo.png]]
 *** Algorithm 25 Make a transformation that rotates around the x-axis cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo25_xaxis-transform.png]]
 *** Table 3 Ambiguous atom renaming swaps cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :width \textwidth
 [[./imgs/table3_atom_renaming.png]]
 
 *** Algorithm 26 Rename symmetric ground truth atoms cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo26_rename-truth-atoms.png]]
 *** Distograms cite:jumperHighlyAccurateProtein2021
-#+ATTR_LATEX: :height \textheight
+#+ATTR_LATEX: :height 0.8\textheight :caption {Example Distogram}
 [[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
 *** Structure Module: Output :ignore:noexport:ARCHIVE:
 
@@ -443,7 +448,7 @@ to the ground truth (like all other frames).
 cite:jumperHighlyAccurateProtein2021
 
 *** [.] Amber Relaxation
-** Final
+** Loss Functions
 *** Loss Functions  cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/loss-eq.png]]
@@ -452,18 +457,23 @@ cite:jumperHighlyAccurateProtein2021
 - weighted to reduce importance of short sequences
   
 *** Loss Functions & Auxillary Heads cite:jumperHighlyAccurateProtein2021
-1. Side chain and backbone torsion angle loss
-2. Frame aligned point error (FAPE)
-   * Configurations with FAPE(X,Y) = 0
-   * Metric properties of FAPE
-3. Chiral properties of AlphaFold and its loss
-4. Model confidence prediction (pLDDT)
-5. TM-score prediction
-6. Distogram prediction
-7. Masked MSA prediction
-8. "Experimentally resolved" prediction
-9. Structural violations
+1. Side chain and backbone torsion angle loss (sec. 1.9.1)
+2. Frame aligned point error (FAPE) (sec. 1.9.2)
+   * Configurations with FAPE(X,Y) = 0 (sec. 1.9.4)
+   * Metric properties of FAPE (sec. 1.9.5)
+3. Chiral properties of AlphaFold and its loss (sec. 1.9.3)
+   * transforms $T_i$ are variant under reflection (see eq. 11 to 17)
+   * atom positions via backbone frames and $\chi$ angles 
+4. Model confidence prediction (pLDDT) (sec. 1.9.6)
+5. TM-score prediction (sec. 1.9.7)
+6. Distogram prediction (sec. 1.9.8)
+7. Masked MSA prediction (sec. 1.9.9)
+8. "Experimentally resolved" prediction (sec. 1.9.10)
+9. Structural violations (sec. 1.9.11)
 
+*** Algorithm 27 Side chain and backbone torsion angle loss cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: width=\textwidth
+[[./imgs/algo27_sidechain-backbonetorsion-loss.png]]
 *** Loss Functions: FAPE 
 
 #+ATTR_LATEX: width=\textwidth :caption {Algorithm 28 cite:jumperHighlyAccurateProtein2021}
@@ -473,32 +483,53 @@ cite:jumperHighlyAccurateProtein2021
 - Variation of commonly used root-mean-squared deviation (RMSD) of atomic positions
 - not invariant to reflections, preventing proteins of the wrong chirality. cite:rubieraAlphaFoldHereWhat, cite:jumperHighlyAccurateProtein2021
   
-*** Algorithm 27 Side chain and backbone torsion angle loss cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: width=\textwidth
-[[./imgs/algo27_sidechain-backbonetorsion-loss.png]]
 *** Algorithm 29 Predict model confidence pLDDT cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo29_confidence-pLDDT.png]]
-*** Algorithm 30 Generic recycling inference procedure cite:jumperHighlyAccurateProtein2021  
+*** TM-score prediction  cite:jumperHighlyAccurateProtein2021 
+- Global superposition metric of $C_\alpha$ atoms (eqs. 31 - 33)
+  1. approximated (eqs. 34-36)
+  2. Probabilistic lower-bound maximum-of-expectation score (eqs. 37-38)
+  3. approximated TM-score using pairwise $C_\alpha$ based computation ($e_{ij}$ matrix) and above (see eq. 39 and adjacent text)
+  4. TM-score of any residue subset $D$ can be computed (eq. 40)
+     * can also be used to estimate GDT, FAPE, RMSD (using $e_{ij}$) matrix (not done)
+     * used for confident domain packing visualizations
+  
+*** Distogram prediction  cite:jumperHighlyAccurateProtein2021 
+:PROPERTIES:
+:ID:       5327dc2a-5ab4-4d11-a7ba-49c64e970d01
+:END:
+-  (eq. 41)
+*** Masked MSA prediction  cite:jumperHighlyAccurateProtein2021 
+*** "Experimentally resolved" prediction (fine tuning) cite:jumperHighlyAccurateProtein2021 
+*** Structural violations (fine tuning)  cite:jumperHighlyAccurateProtein2021 
+* Training & Inference Details
+*** Recycling iterations
+**** Algorithm 30 Generic recycling inference procedure cite:jumperHighlyAccurateProtein2021  
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo30_recycling.png]]
-*** Algorithm 31 Generic recycling training procedure cite:jumperHighlyAccurateProtein2021  
+**** Algorithm 31 Generic recycling training procedure cite:jumperHighlyAccurateProtein2021  
 #+ATTR_LATEX: height=\textheight
 [[./imgs/algo31_generic-recycling.png]]
-*** Algorithm 32 Embedding of evoformer and structure module outputs for recycling cite:jumperHighlyAccurateProtein2021 
+**** Algorithm 32 Embedding of evoformer and structure module outputs for recycling cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: height=\textheight
 [[./imgs/algo32_recycling-embedding.png]]
-** Training & Inference Details
-** Recycling Iterations
+*** Training stages  cite:jumperHighlyAccurateProtein2021  
+*** MSA resampling and ensembling  cite:jumperHighlyAccurateProtein2021  
+*** Optimization details  cite:jumperHighlyAccurateProtein2021  
+- Adam $\italic{lr} == 10^{-3}, \beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-6}$
+  - lr warm-up for $0.128 \dot 10^6$ samples, increase again by $0.65 after 6.4 \dot 10^6$ samples
+- batch: 128
+- gradient clipping by global norm (per parameter*sample) of 0.1
+  
+*** Parameters initialization  cite:jumperHighlyAccurateProtein2021  
+*** Loss clamping details  cite:jumperHighlyAccurateProtein2021  
+*** Dropout details  cite:jumperHighlyAccurateProtein2021  
+*** Evaluator setup  cite:jumperHighlyAccurateProtein2021  
+*** Reducing the memory consumption  cite:jumperHighlyAccurateProtein2021  
 * Results 
-*** Results cite:jumperHighlyAccurateProtein2021
-They did well
-
 *** CASP14 Assessment cite:jumperHighlyAccurateProtein2021
 They did well
-*** Novel Folds
-They did well
-
 *** Ablation Studies cite:jumperHighlyAccurateProtein2021 
 Baseline for all ablation models: Full model without noisy-student self-attention  
 Ablations:
@@ -513,8 +544,19 @@ Ablations:
 9. No auxiliary distogram head
 10. No auxiliary masked MSA head
 
+
+*** Ablation Results (in main paper) cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height 0.9\textheight
+[[./imgs/ablation_results.png]]
+*** Ablation Results cite:jumperHighlyAccurateProtein2021 
+#+ATTR_LATEX: :height 0.9\textheight
+[[./imgs/fig10_ablation_results.png]]
+
 *** Network Probing cite:jumperHighlyAccurateProtein2021 
 todo
+
+*** Novel Folds
+They did well
 
 *** Attention Visualization cite:jumperHighlyAccurateProtein2021
 todo
