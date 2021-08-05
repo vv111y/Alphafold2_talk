@@ -1,4 +1,4 @@
-% Created 2021-08-05 Thu 12:26
+% Created 2021-08-05 Thu 12:48
 % Intended LaTeX compiler: pdflatex
 \documentclass[presentation, smaller]{beamer}
 \usepackage[utf8]{inputenc}
@@ -49,8 +49,8 @@
 
 \maketitle
 \section*{Introduction}
-\label{sec:orga95ebb2}
-\begin{frame}[label={sec:orgcb21212}]{Introduction}
+\label{sec:org4f5f3b0}
+\begin{frame}[label={sec:org4a4fa45}]{Introduction}
 \begin{columns}
 \begin{column}{0.4\columnwidth}
 \begin{center}
@@ -68,7 +68,7 @@ Willy Rempel
 \end{column}
 \end{columns}
 \end{frame}
-\begin{frame}[label={sec:org2534820}]{Introduction}
+\begin{frame}[label={sec:org867dfa4}]{Introduction}
 \begin{quote}
 Although all of the ideas in the model are doubtlessly clever, the main secret behind AlphaFold 2’s success is the superb deep learning engineering. A close look at the model reveals an architecture with a large amount of small details that seem fundamental for the performance of the network. As we admire the end product, we should not turn a blind eye to the enormous budget, and the large team of full-time, handsomely paid engineers that made it possible.  \cite{rubieraAlphaFoldHereWhat}
 \end{quote}
@@ -79,24 +79,24 @@ This, and many other tricks, are described in exhaustive detail in the Supplemen
 
 \flushright{(above blog post is recommended reading)}
 \end{frame}
-\begin{frame}[label={sec:org16d4f1f}]{Model Overview \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgebb2e77}]{Model Overview \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/model-overview.png}
 \end{center} 
 \end{frame}
 
 \section*{Data Pipeline}
-\label{sec:org2acc96d}
-\begin{frame}[label={sec:orge27183c}]{Initial Input: mmCIF or FASTA files}
+\label{sec:orgb8f4bae}
+\begin{frame}[label={sec:orgd3b3cfa}]{Initial Input: mmCIF or FASTA files}
 \begin{figure}[htbp]
 \centering
 \includegraphics[height=0.8\textheight]{./imgs/mmcif-eg.png}
-\caption{Example mmCIF file (see \protect\cite(PDB101LearnGuide)}
+\caption{Example mmCIF file (see \protect\cite{PDB101LearnGuide})}
 \end{figure}
 \end{frame}
 
 
-\begin{frame}[label={sec:org9a316f4}]{Initial Input: mmCIF or FASTA files}
+\begin{frame}[label={sec:org9fe96b5}]{Initial Input: mmCIF or FASTA files}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./imgs/fastafiles_2021-07-20.png}
@@ -104,14 +104,14 @@ This, and many other tricks, are described in exhaustive detail in the Supplemen
 \end{figure}
 \end{frame}
 
-\begin{frame}[label={sec:orgd39b98e}]{Parsing \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgab82f01}]{Parsing \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item only certain metadata (more from mmCIF)
 \item change MSE residues into MET
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orgdc961c2}]{Genetic Search \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org7d4badc}]{Genetic Search \cite{jumperHighlyAccurateProtein2021}}
 For MSAs
 \begin{itemize}
 \item JackHMMER
@@ -133,7 +133,7 @@ flags: \\
 \end{quote}
 \end{frame}
 
-\begin{frame}[label={sec:org8f9d465}]{Template Search \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orge7ae846}]{Template Search \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item UniRef90 MSA from prior search used for PDB70 search using HHSearch.
 \item Filter out:
@@ -146,14 +146,14 @@ flags: \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org1488463}]{Training Data \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orge857553}]{Training Data \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item 75:25 self-distillation : known structure (PDB)
 \item stochastic filters (next)
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org2feed54}]{Filtering \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org433cc0a}]{Filtering \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item stochastic filters: 
 \begin{itemize}
@@ -165,7 +165,7 @@ flags: \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org08ffa71}]{MSA block deletion \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org0207119}]{MSA block deletion \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item Block deletion tends to remove similarities (ie. whole branch phylogeny) and promote diversity
 \begin{itemize}
@@ -177,12 +177,12 @@ flags: \\
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orga1c355b}]{Algorithm 1 MSA Block deletion \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgc02b307}]{Algorithm 1 MSA Block deletion \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo1_block_deletion.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgb478d1d}]{MSA clustering \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgca76dd1}]{MSA clustering \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item Similarity clusters used to randomly select subset of MSA sequences 
 \begin{itemize}
@@ -206,7 +206,7 @@ Clustering Algorithm:
 \end{enumerate}
 \end{frame}
 
-\begin{frame}[label={sec:org59c181a}]{Residue cropping \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgc5d6117}]{Residue cropping \cite{jumperHighlyAccurateProtein2021}}
 During training:
 \begin{enumerate}
 \item unclamped \& clamped - sampling start index from uniform distributions
@@ -214,7 +214,7 @@ During training:
 \end{enumerate}
 \end{frame}
 
-\begin{frame}[label={sec:orge5aa2ae}]{Featurization and model inputs \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgc1cec96}]{Featurization and model inputs \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item \alert{target\textsubscript{feat}} \\
 This is a feature of size [Nres, 21] consisting of the “aatype” feature.
@@ -226,7 +226,7 @@ This is a feature of size [Nclust, Nres, 49] constructed by concatenating “clu
 This is a feature of size [Nextra\textsubscript{seq}, Nres, 25] constructed by concatenating “extra\textsubscript{msa}”, “extra\textsubscript{msa}\textsubscript{has}\textsubscript{deletion}”, “extra\textsubscript{msa}\textsubscript{deletion}\textsubscript{value}”. Together with “msa\textsubscript{feat}’ above we also draw Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2).
 \end{itemize}
 \end{frame}
-\begin{frame}[label={sec:orgd5be931}]{Featurization and model inputs \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org6352966}]{Featurization and model inputs \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item \alert{template\textsubscript{pair}\textsubscript{feat}} \\
 This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template\textsubscript{distogram}”, “template\textsubscript{unit}\textsubscript{vector}”, and also several residue features, which are transformed into pair features. \\
@@ -237,18 +237,18 @@ This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the fo
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org09570ec}]{Table 1 Input Features (1/2) \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgf17f0ea}]{Table 1 Input Features (1/2) \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.8\textheight]{./imgs/table1_inputs_1.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgabe9304}]{Table 1 Input Features (2/2) \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgacca343}]{Table 1 Input Features (2/2) \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.8\textheight]{./imgs/table1_inputs_2.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org68f2d5b}]{Self-distillation dataset \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orga51b4f4}]{Self-distillation dataset \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item Build dataset (on unlabeled sequences):
 \begin{enumerate}
@@ -269,8 +269,8 @@ This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the fo
 \end{frame}
 
 \section*{AlphaFold Inference}
-\label{sec:org8ca1a16}
-\begin{frame}[label={sec:org96723e8}]{AlphaFold Inference \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:orgb517554}
+\begin{frame}[label={sec:org47c1339}]{AlphaFold Inference \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item AlphaFold receives input features derived from:
 \begin{itemize}
@@ -293,114 +293,114 @@ This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the fo
 Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding description in the main article).
 \end{frame}
 
-\begin{frame}[label={sec:orgb5b7f5a}]{Algorithm 2 Model Inference \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgc8b034f}]{Algorithm 2 Model Inference \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo2_cut_part1.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgcf165e7}]{Algorithm 2 Model Inference \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org7527166}]{Algorithm 2 Model Inference \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo2_cut_part2.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org91031c5}]{AlphaFold Training \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org039c15e}]{AlphaFold Training \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/table4_model_training.png}
 \end{center}
 \end{frame}
 \section*{Model Architecture}
-\label{sec:org57fd487}
-\begin{frame}[label={sec:orgcd42b95}]{Input embeddings \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:org899b221}
+\begin{frame}[label={sec:org8dffce4}]{Input embeddings \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/input_embeddings.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org2d12d86}]{Algorithm 3 Input embeddings \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org46e8194}]{Algorithm 3 Input embeddings \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo3_input_embed.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgdc22aaa}]{Algorithm 4 Relative positional encoding \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org4b52f64}]{Algorithm 4 Relative positional encoding \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo4_pos_encoding.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org3e7cdd4}]{Algorithm 5 One-hot encoding with nearest bin \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org8924895}]{Algorithm 5 One-hot encoding with nearest bin \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo5_1hot_bin_encode.png}
 \end{center}
 \end{frame}
 
 \subsection*{EvoFormer}
-\label{sec:org93ed668}
-\begin{frame}[label={sec:orgf2b011f}]{EvoFormer: Overview \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:org73915f7}
+\begin{frame}[label={sec:org439ec00}]{EvoFormer: Overview \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/model-evoformer-main.png}
 \end{center} 
 \end{frame}
 
-\begin{frame}[label={sec:org6b9b16a}]{EvoFormer: Overview \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org8d34d0c}]{EvoFormer: Overview \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item cast as a graph inference problem
 \item cross-optimization and information flow between MSA representation and pair-wise representation
 \item layer normalization
 \end{itemize}
 \end{frame}
-\begin{frame}[label={sec:org0aa73d4}]{Algorithm 6 EvoFormer stack \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org877b8c2}]{Algorithm 6 EvoFormer stack \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo6_evoformer.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org0c2154f}]{EvoFormer: Row wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org65e915b}]{EvoFormer: Row wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/rowwise-gated-attention.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org956ae11}]{Algorithm 7 Row wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgaf15a10}]{Algorithm 7 Row wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
-\includegraphics[height=0.9\textheight]{./imgs/algo7_evo_row_attention.png}
+\includegraphics[height=0.8\textheight]{./imgs/algo7_evo_row_attention.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org0af0158}]{EvoFormer: Column wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgf5d6a96}]{EvoFormer: Column wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/columnwise-gated-attention.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgb4856eb}]{Algorithm 8 Column wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org4e9c184}]{Algorithm 8 Column wise Gated Attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
-\includegraphics[height=0.9\textheight]{./imgs/algo8_evo_col_attention.png}
+\includegraphics[height=0.8\textheight]{./imgs/algo8_evo_col_attention.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org6793268}]{EvoFormer: MSA Translation Layer \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orge17c8d4}]{EvoFormer: MSA Translation Layer \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/msa-translation-layer.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org84de7f2}]{Algorithm 9 MSA Translation Layer \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orga3967f3}]{Algorithm 9 MSA Translation Layer \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=\textwidth]{./imgs/algo9_msa_transition.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgd581718}]{EvoFormer: Outer-Product Mean \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgc71a7e9}]{EvoFormer: Outer-Product Mean \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/outer-product-mean.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgaa45c09}]{Algorithm 10 Outer-Product Mean \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orga4ccaa6}]{Algorithm 10 Outer-Product Mean \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=\textwidth]{./imgs/algo10_outer_product.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org177c66e}]{EvoFormer: Residue Pairs \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org679e68d}]{EvoFormer: Residue Pairs \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[scale=0.2]{./imgs/model-evoformer-pair1.png}
 \end{center}
@@ -409,79 +409,79 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org1e5eb1f}]{EvoFormer: Triangular Multiplicative Update \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgaf33686}]{EvoFormer: Triangular Multiplicative Update \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/triangular-mult-update.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org6faf784}]{Algorithm 11 Triangular Multiplicative Update: outward \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org99567e2}]{Algorithm 11 Triangular Multiplicative Update: outward \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo11_triangular_out.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgc50e24d}]{Algorithm 12 Triangular Multiplicative Update: inward \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org71ff72f}]{Algorithm 12 Triangular Multiplicative Update: inward \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo12_triangular_in.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org6134182}]{EvoFormer: Triangular Self-Attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org50389f8}]{EvoFormer: Triangular Self-Attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/triangular-self-attention.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org51af84f}]{Algorithm 13 Triangular Self-Attention: start \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgc6da15e}]{Algorithm 13 Triangular Self-Attention: start \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo13_triangular_attention_start.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgb944bda}]{Algorithm 14 Triangular Self-Attention: end  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgd75c0ba}]{Algorithm 14 Triangular Self-Attention: end  \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo14_triangular_end.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org67390a3}]{Algorithm 15 Transition layer in the pair stack \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org3b8c13b}]{Algorithm 15 Transition layer in the pair stack \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo15_pair_transition.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org4e91421}]{Algorithm 16 Template pair stack \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org6a9f006}]{Algorithm 16 Template pair stack \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo16_template_pair_stack.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgcbdab21}]{Algorithm 17 Template pointwise attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org151b2fc}]{Algorithm 17 Template pointwise attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=\textwidth]{./imgs/algo17_template_point_attention.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org580e5ee}]{Algorithm 18 Extra MSA stack \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org9d4cc2b}]{Algorithm 18 Extra MSA stack \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo18_extra_msa_stack.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgc0838c9}]{Algorithm 19 MSA global column-wise gated self-attention \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org906dc78}]{Algorithm 19 MSA global column-wise gated self-attention \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo19_msa_global_col_attention.png}
 \end{center}
 \end{frame}
 
 \subsection*{Structure Module}
-\label{sec:org0ea805f}
-\begin{frame}[label={sec:org764ee98}]{Structure Module: Overview \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:org5470bd9}
+\begin{frame}[label={sec:org95d3f6f}]{Structure Module: Overview \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/model-structure.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org5e09cf4}]{Structure Module: Frame Representation}
+\begin{frame}[label={sec:orgbb3629a}]{Structure Module: Frame Representation}
 \begin{figure}[htbp]
 \centering
 \includegraphics[scale=0.8]{./imgs/TransformationMatrix1.png}
@@ -494,85 +494,85 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \item they construct ground truth frames using the position of three atoms from the ground truth PDB structures using a Gram–Schmidt process (Algorithm 21)
 \end{itemize}
 \end{frame}
-\begin{frame}[label={sec:orgad07bee}]{Structure Module: Invariant point attention (IPA) \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org28b432d}]{Structure Module: Invariant point attention (IPA) \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/ipa.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgea8a509}]{Structure Module: Algorithm Part 1 \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgdd356fb}]{Structure Module: Algorithm Part 1 \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo20-part1.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org19dff36}]{Structure Module: Algorithm Part 2 \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orga3e3515}]{Structure Module: Algorithm Part 2 \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo20-part2.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org5392af1}]{Structure Module: Algorithm Part 3 \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org244dd17}]{Structure Module: Algorithm Part 3 \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo20-part3.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:org756715d}]{Table 2 Rigid atomic groups from torsion angles \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org4ebcfad}]{Table 2 Rigid atomic groups from torsion angles \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/table2_rigid_atom_groups.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgb0270ae}]{Algorithm 21 Frame construction from ground truth atom positions \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org838c7f4}]{Algorithm 21 Frame construction from ground truth atom positions \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
-\includegraphics[height=0.9\textheight]{./imgs/algo21_gram_schmidt.png}
+\includegraphics[width=0.9\textwidth]{./imgs/algo21_gram_schmidt.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org5332876}]{Algorithm 22 Invariant point attention (IPA) \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org0923eb0}]{Algorithm 22 Invariant point attention (IPA) \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo22_ipa.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgdb19113}]{Algorithm 23 Backbone update \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org4b73fff}]{Algorithm 23 Backbone update \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo23_backbone-update.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgfddf254}]{Algorithm 24 Compute all atom coordinates \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org42ddf21}]{Algorithm 24 Compute all atom coordinates \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/algo24_all-atom-coords-algo.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org3aa9b86}]{Algorithm 25 Make a transformation that rotates around the x-axis \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org893ab32}]{Algorithm 25 Make a transformation that rotates around the x-axis \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo25_xaxis-transform.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgfa7989f}]{Table 3 Ambiguous atom renaming swaps \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orge876001}]{Table 3 Ambiguous atom renaming swaps \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=\textwidth]{./imgs/table3_atom_renaming.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgaef3a24}]{Algorithm 26 Rename symmetric ground truth atoms \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org96c8ffd}]{Algorithm 26 Rename symmetric ground truth atoms \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo26_rename-truth-atoms.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org1d0d559}]{Distograms \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgd19777b}]{Distograms \cite{jumperHighlyAccurateProtein2021}}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.9\textwidth]{./imgs/distogram_example.png}
 \caption{Example Distogram \protect\cite{seniorImprovedProteinStructure2020}}
 \end{figure}
 \end{frame}
-\begin{frame}[label={sec:org5d58972}]{Amber Relaxation}
+\begin{frame}[label={sec:org598b501}]{Amber Relaxation}
 \end{frame}
 \subsection*{Loss Functions}
-\label{sec:org57280e1}
-\begin{frame}[label={sec:org21caa67}]{Loss Functions  \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:org0e74be0}
+\begin{frame}[label={sec:org447ccae}]{Loss Functions  \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/loss-eq.png}
 \end{center}
@@ -583,7 +583,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orge3823ec}]{Loss Functions \& Auxillary Heads \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org8450db3}]{Loss Functions \& Auxillary Heads \cite{jumperHighlyAccurateProtein2021}}
 \begin{enumerate}
 \item Side chain and backbone torsion angle loss (sec. 1.9.1)
 \item Frame aligned point error (FAPE) (sec. 1.9.2)
@@ -605,12 +605,12 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \end{enumerate}
 \end{frame}
 
-\begin{frame}[label={sec:org62ff09d}]{Algorithm 27 Side chain and backbone torsion angle loss \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orga018bae}]{Algorithm 27 Side chain and backbone torsion angle loss \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo27_sidechain-backbonetorsion-loss.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgd2b0589}]{Loss Functions: FAPE}
+\begin{frame}[label={sec:orgc33c6d3}]{Loss Functions: FAPE}
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=.9\linewidth]{./imgs/algo28_fape.png}
@@ -624,12 +624,12 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:orgb56e7cd}]{Algorithm 29 Predict model confidence pLDDT \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org304bf94}]{Algorithm 29 Predict model confidence pLDDT \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo29_confidence-pLDDT.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org68e22ae}]{TM-score prediction  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orge9fb894}]{TM-score prediction  \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item Global superposition metric of \(C_\alpha\) atoms (eqs. 31 - 33)
 \begin{enumerate}
@@ -645,41 +645,41 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org4923ac2}]{Distogram prediction  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org009ecd7}]{Distogram prediction  \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item (eq. 41)
 \end{itemize}
 \end{frame}
-\begin{frame}[label={sec:orgd4a4568}]{Masked MSA prediction  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org80aeec3}]{Masked MSA prediction  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org65442e9}]{"Experimentally resolved" prediction (fine tuning) \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org1425f9b}]{"Experimentally resolved" prediction (fine tuning) \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org1bacd5d}]{Structural violations (fine tuning)  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgfce5f2e}]{Structural violations (fine tuning)  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
 \section*{Training \& Inference Details}
-\label{sec:org7a1f6c5}
+\label{sec:orgcb95690}
 \subsection*{Recycling iterations}
-\label{sec:org2a127e8}
-\begin{frame}[label={sec:org6cd0269}]{Algorithm 30 Generic recycling inference procedure \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:org7c0fa47}
+\begin{frame}[label={sec:org1f655fb}]{Algorithm 30 Generic recycling inference procedure \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo30_recycling.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org2ebc932}]{Algorithm 31 Generic recycling training procedure \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org3a0fdc1}]{Algorithm 31 Generic recycling training procedure \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo31_generic-recycling.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgd628978}]{Algorithm 32 Embedding of evoformer and structure module outputs for recycling \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgef69377}]{Algorithm 32 Embedding of evoformer and structure module outputs for recycling \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[width=.9\linewidth]{./imgs/algo32_recycling-embedding.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:org340807b}]{Training stages  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org4f28bc1}]{Training stages  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org80f01f2}]{MSA resampling and ensembling  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org3d85acc}]{MSA resampling and ensembling  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org235d885}]{Optimization details  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org7e91a0c}]{Optimization details  \cite{jumperHighlyAccurateProtein2021}}
 \begin{itemize}
 \item Adam \(\italic{lr} == 10^{-3}, \beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-6}\)
 \begin{itemize}
@@ -690,22 +690,22 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 \end{itemize}
 \end{frame}
 
-\begin{frame}[label={sec:org2fd971f}]{Parameters initialization  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org186622e}]{Parameters initialization  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org0ef0a38}]{Loss clamping details  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org423292d}]{Loss clamping details  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org5b70ff8}]{Dropout details  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgba1dbc6}]{Dropout details  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:orgcaf7669}]{Evaluator setup  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org09eaaef}]{Evaluator setup  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
-\begin{frame}[label={sec:org37c67e0}]{Reducing the memory consumption  \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgbac25a3}]{Reducing the memory consumption  \cite{jumperHighlyAccurateProtein2021}}
 \end{frame}
 \section*{Results}
-\label{sec:org5b6ce24}
-\begin{frame}[label={sec:orgc7d9e17}]{CASP14 Assessment \cite{jumperHighlyAccurateProtein2021}}
+\label{sec:org7c7a457}
+\begin{frame}[label={sec:org2d131a6}]{CASP14 Assessment \cite{jumperHighlyAccurateProtein2021}}
 They did well
 \end{frame}
-\begin{frame}[label={sec:org474fca0}]{Ablation Studies \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org5d63886}]{Ablation Studies \cite{jumperHighlyAccurateProtein2021}}
 Baseline for all ablation models: Full model without noisy-student self-attention  
 Ablations:
 \begin{enumerate}
@@ -722,35 +722,35 @@ Ablations:
 \end{enumerate}
 \end{frame}
 
-\begin{frame}[label={sec:orgc60ae19}]{Ablation Results (in main paper) \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org7b72ead}]{Ablation Results (in main paper) \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/ablation_results.png}
 \end{center}
 \end{frame}
-\begin{frame}[label={sec:orgb02dcfd}]{Ablation Results \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgec8d846}]{Ablation Results \cite{jumperHighlyAccurateProtein2021}}
 \begin{center}
 \includegraphics[height=0.9\textheight]{./imgs/fig10_ablation_results.png}
 \end{center}
 \end{frame}
 
-\begin{frame}[label={sec:orgc2c6ae2}]{Network Probing \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org86e5026}]{Network Probing \cite{jumperHighlyAccurateProtein2021}}
 todo
 \end{frame}
 
-\begin{frame}[label={sec:org2c6d0de}]{Novel Folds}
+\begin{frame}[label={sec:org4f1d4fc}]{Novel Folds}
 They did well
 \end{frame}
 
-\begin{frame}[label={sec:orge514d65}]{Attention Visualization \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:orgaa3cb85}]{Attention Visualization \cite{jumperHighlyAccurateProtein2021}}
 todo
 \end{frame}
 
-\begin{frame}[label={sec:org1a3b814}]{Additional Results \cite{jumperHighlyAccurateProtein2021}}
+\begin{frame}[label={sec:org90e4014}]{Additional Results \cite{jumperHighlyAccurateProtein2021}}
 todo
 \end{frame}
 
 \section*{Biblio}
-\label{sec:org9cf49fc}
+\label{sec:org3e23c2b}
 \begin{frame}[fragile,allowframebreaks,label=]{Bibliography}
 \printbibliography
 \end{frame}

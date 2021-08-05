@@ -124,7 +124,7 @@ Willy Rempel
 
 * Data Pipeline
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: :height 0.8\textheight :caption \caption{Example mmCIF file (see \protect\cite(PDB101LearnGuide)}
+#+ATTR_LATEX: :height 0.8\textheight :caption \caption{Example mmCIF file (see \protect\cite{PDB101LearnGuide})}
 [[./imgs/mmcif-eg.png]]
 
 
@@ -297,7 +297,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/rowwise-gated-attention.png]]
 
 *** Algorithm 7 Row wise Gated Attention cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height 0.9\textheight
+#+ATTR_LATEX: :height 0.8\textheight
 [[./imgs/algo7_evo_row_attention.png]]
 
 *** EvoFormer: Column wise Gated Attention cite:jumperHighlyAccurateProtein2021
@@ -305,7 +305,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/columnwise-gated-attention.png]]
 
 *** Algorithm 8 Column wise Gated Attention cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height 0.9\textheight
+#+ATTR_LATEX: :height 0.8\textheight
 [[./imgs/algo8_evo_col_attention.png]]
 
 *** EvoFormer: MSA Translation Layer cite:jumperHighlyAccurateProtein2021
@@ -409,7 +409,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 [[./imgs/table2_rigid_atom_groups.png]]
 
 *** Algorithm 21 Frame construction from ground truth atom positions cite:jumperHighlyAccurateProtein2021 
-#+ATTR_LATEX: :height 0.9\textheight
+#+ATTR_LATEX: :width 0.9\textwidth
 [[./imgs/algo21_gram_schmidt.png]]
 *** Algorithm 22 Invariant point attention (IPA) cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: :height 0.9\textheight
