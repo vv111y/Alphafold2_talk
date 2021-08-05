@@ -52,9 +52,10 @@
 
 \setbeamerfont{large}{size=\large}
 
-* START [0/1] :ignore:noexport:
+* START [0/2] :ignore:noexport:
 ** LOG
 ** ---
+** [.] include slide with repo, colab links
 ** [.] train todo 
 
 Predictions of side chain chi angles as well as the final, per-residue accuracy of the structure (pLDDT) are computed with small per-residue networks on the final activations at the end of the network.
@@ -123,13 +124,12 @@ Willy Rempel
 
 * Data Pipeline
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: :height 0.8\textheight :caption {Example mmCIF file}
+#+ATTR_LATEX: :height 0.8\textheight :caption \caption{Example mmCIF file (see \protect\cite(PDB101LearnGuide)}
 [[./imgs/mmcif-eg.png]]
 
-see cite:PDB101LearnGuide for full guide
 
 *** Initial Input: mmCIF or FASTA files
-#+ATTR_LATEX: height=0.9*\textheight :caption {Example FASTA file}
+#+ATTR_LATEX: height=0.9*\textheight :caption \caption{Example FASTA file}
 [[./imgs/fastafiles_2021-07-20.png]]
 
 *** Parsing cite:jumperHighlyAccurateProtein2021
@@ -147,8 +147,8 @@ For MSAs
 - MSAs duplicated and stacked
 
 #+begin_quote
-flags:
-  JackHMMER: -N 1 -E 0.0001 --incE 0.0001 --F1 0.0005 --F2 0.00005 --F3 0.0000005.
+flags: \\
+  JackHMMER: -N 1 -E 0.0001 --incE 0.0001 --F1 0.0005 --F2 0.00005 --F3 0.0000005. \\
   HHBlits: -n 3 -e 0.001 -realign_max 100000 -maxfilt 100000 -min_prefilter_hits 1000 -maxseq 1000000.
 #+end_quote
 
@@ -186,7 +186,7 @@ flags:
 - Similarity clusters used to randomly select subset of MSA sequences 
   - to reduce computational cost from attention modules, reduce $N_seq$
 - Modified K-means is used, with the input sequence used as first cluster center
-
+\\
 Clustering Algorithm:
 1. $N_{clust}$ centers selected from MSA
 2. Generate a mask where /p=0.15/ that any position is selected by the mask
@@ -203,17 +203,21 @@ During training:
 2. Cropped with fixed size $N_res$
 
 *** [.] Featurization and model inputs cite:jumperHighlyAccurateProtein2021
-- *target_feat*
+- *target_feat* \\
   This is a feature of size [Nres, 21] consisting of the “aatype” feature.
-- *residue_index*
-  This is a feature of size [Nres] consisting of the “residue_index” feature.
-- *msa_feat*
+- *residue_index* \\
+  Positional encoding constant tensor. This is a feature of size [Nres] consisting of the “residue_index” feature.
+- *msa_feat* \\
   This is a feature of size [Nclust, Nres, 49] constructed by concatenating “cluster_msa”, “cluster_has_deletion”, “cluster_deletion_value”, “cluster_deletion_mean”, “cluster_profile”. We draw Ncycle×Nensemble random samples from this feature to provide each recycling/ensembling iteration of the network with a different sample (see subsubsection 1.11.2).
-- *extra_msa_feat*
+- *extra_msa_feat* \\
   This is a feature of size [Nextra_seq, Nres, 25] constructed by concatenating “extra_msa”, “extra_msa_has_deletion”, “extra_msa_deletion_value”. Together with “msa_feat’ above we also draw Ncycle × Nensemble random samples from this feature (see subsubsection 1.11.2).
 *** [.] Featurization and model inputs cite:jumperHighlyAccurateProtein2021
-- *template_pair_feat*
-  This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. The “template_aatype” feature is included via tiling and stack- ing (this is done twice, in both residue directions). Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. - template_angle_feat This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”. 
+- *template_pair_feat* \\
+  This is a feature of size [Ntempl, Nres, Nres, 88] and consists of concatenation of the pair residue features “template_distogram”, “template_unit_vector”, and also several residue features, which are transformed into pair features. \\
+  The “template_aatype” feature is included via tiling and stacking (this is done twice, in both residue directions). \\
+  Also the mask features “template_pseudo_beta_mask” and “template_backbone_frame_mask” are included, where the feature fij = maski · maskj. \\
+- *template_angle_feat* \\
+  This is a feature of size [Ntempl, Nres, 51] constructed by concatenating the following features: “template_aatype”, “template_torsion_angles”, “template_alt_torsion_angles”, and “template_torsion_angles_mask”. 
 
 *** Table 1 Input Features (1/2) cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: :height 0.8\textheight
@@ -378,7 +382,7 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 
 *** Structure Module: Frame Representation 
 
-#+ATTR_LATEX: :scale 0.3 :caption {Example transform cite:SpatialTransformationMatrices}
+#+ATTR_LATEX: :scale 0.8 :caption \caption{Example transform \protect\cite{SpatialTransformationMatrices}}
 [[./imgs/TransformationMatrix1.png]]
 
 - rotation + translation transforms $T_i := (R_i,t_i)$
@@ -428,8 +432,8 @@ Algorithm 2 outlines the main steps (see also Fig 1e and the corresponding descr
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo26_rename-truth-atoms.png]]
 *** Distograms cite:jumperHighlyAccurateProtein2021
-#+ATTR_LATEX: :height 0.8\textheight :caption {Example Distogram}
-[[./imgs/Examples-of-distograms-from-trRosetta.jpg]]
+#+ATTR_LATEX: :width 0.9\textwidth :caption \caption{Example Distogram \protect\cite{seniorImprovedProteinStructure2020}}
+[[./imgs/distogram_example.png]]
 *** Structure Module: Output :ignore:noexport:ARCHIVE:
 
 - predicts backbone frames $T_i$ and torsion angles $α^f_i$
@@ -495,40 +499,40 @@ cite:jumperHighlyAccurateProtein2021
      * can also be used to estimate GDT, FAPE, RMSD (using $e_{ij}$) matrix (not done)
      * used for confident domain packing visualizations
   
-*** Distogram prediction  cite:jumperHighlyAccurateProtein2021 
+*** [.] Distogram prediction  cite:jumperHighlyAccurateProtein2021 
 :PROPERTIES:
 :ID:       5327dc2a-5ab4-4d11-a7ba-49c64e970d01
 :END:
 -  (eq. 41)
-*** Masked MSA prediction  cite:jumperHighlyAccurateProtein2021 
-*** "Experimentally resolved" prediction (fine tuning) cite:jumperHighlyAccurateProtein2021 
-*** Structural violations (fine tuning)  cite:jumperHighlyAccurateProtein2021 
+*** [.] Masked MSA prediction  cite:jumperHighlyAccurateProtein2021 
+*** [.] "Experimentally resolved" prediction (fine tuning) cite:jumperHighlyAccurateProtein2021 
+*** [.] Structural violations (fine tuning)  cite:jumperHighlyAccurateProtein2021 
 * Training & Inference Details
-*** Recycling iterations
-**** Algorithm 30 Generic recycling inference procedure cite:jumperHighlyAccurateProtein2021  
+** Recycling iterations
+*** Algorithm 30 Generic recycling inference procedure cite:jumperHighlyAccurateProtein2021  
 #+ATTR_LATEX: width=\textwidth
 [[./imgs/algo30_recycling.png]]
-**** Algorithm 31 Generic recycling training procedure cite:jumperHighlyAccurateProtein2021  
+*** Algorithm 31 Generic recycling training procedure cite:jumperHighlyAccurateProtein2021  
 #+ATTR_LATEX: height=\textheight
 [[./imgs/algo31_generic-recycling.png]]
-**** Algorithm 32 Embedding of evoformer and structure module outputs for recycling cite:jumperHighlyAccurateProtein2021 
+*** Algorithm 32 Embedding of evoformer and structure module outputs for recycling cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: height=\textheight
 [[./imgs/algo32_recycling-embedding.png]]
-*** Training stages  cite:jumperHighlyAccurateProtein2021  
-*** MSA resampling and ensembling  cite:jumperHighlyAccurateProtein2021  
+*** [.] Training stages  cite:jumperHighlyAccurateProtein2021  
+*** [.] MSA resampling and ensembling  cite:jumperHighlyAccurateProtein2021  
 *** Optimization details  cite:jumperHighlyAccurateProtein2021  
 - Adam $\italic{lr} == 10^{-3}, \beta_1 = 0.9, \beta_2 = 0.999, \epsilon = 10^{-6}$
   - lr warm-up for $0.128 \dot 10^6$ samples, increase again by $0.65 after 6.4 \dot 10^6$ samples
 - batch: 128
 - gradient clipping by global norm (per parameter*sample) of 0.1
   
-*** Parameters initialization  cite:jumperHighlyAccurateProtein2021  
-*** Loss clamping details  cite:jumperHighlyAccurateProtein2021  
-*** Dropout details  cite:jumperHighlyAccurateProtein2021  
-*** Evaluator setup  cite:jumperHighlyAccurateProtein2021  
-*** Reducing the memory consumption  cite:jumperHighlyAccurateProtein2021  
+*** [.] Parameters initialization  cite:jumperHighlyAccurateProtein2021  
+*** [.] Loss clamping details  cite:jumperHighlyAccurateProtein2021  
+*** [.] Dropout details  cite:jumperHighlyAccurateProtein2021  
+*** [.] Evaluator setup  cite:jumperHighlyAccurateProtein2021  
+*** [.] Reducing the memory consumption  cite:jumperHighlyAccurateProtein2021  
 * Results 
-*** CASP14 Assessment cite:jumperHighlyAccurateProtein2021
+*** [.] CASP14 Assessment cite:jumperHighlyAccurateProtein2021
 They did well
 *** Ablation Studies cite:jumperHighlyAccurateProtein2021 
 Baseline for all ablation models: Full model without noisy-student self-attention  
@@ -544,7 +548,6 @@ Ablations:
 9. No auxiliary distogram head
 10. No auxiliary masked MSA head
 
-
 *** Ablation Results (in main paper) cite:jumperHighlyAccurateProtein2021 
 #+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/ablation_results.png]]
@@ -552,16 +555,16 @@ Ablations:
 #+ATTR_LATEX: :height 0.9\textheight
 [[./imgs/fig10_ablation_results.png]]
 
-*** Network Probing cite:jumperHighlyAccurateProtein2021 
+*** [.] Network Probing cite:jumperHighlyAccurateProtein2021 
 todo
 
-*** Novel Folds
+*** [.] Novel Folds
 They did well
 
-*** Attention Visualization cite:jumperHighlyAccurateProtein2021
+*** [.] Attention Visualization cite:jumperHighlyAccurateProtein2021
 todo
 
-*** Additional Results cite:jumperHighlyAccurateProtein2021
+*** [.] Additional Results cite:jumperHighlyAccurateProtein2021
 todo
 
 * Biblio
