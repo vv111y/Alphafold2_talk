@@ -451,7 +451,18 @@ groups ω and φ do not contain atoms, but the corresponding frames contribute t
 to the ground truth (like all other frames).
 cite:jumperHighlyAccurateProtein2021
 
-*** [.] Amber Relaxation
+*** Amber Relaxation cite:jumperHighlyAccurateProtein2021
+- Iterative restrained energy minimization procedure:
+  - minimization of the AMBER99SB force field
+    - additional harmonic restraints (keep system near its input structure)
+    - restraints applied independently to heavy atoms, with a spring constant of 10 kcal/mol Å2
+- Once minimizer has converged, determine which residues still contain violations
+  - remove restraints from all atoms within these residues and perform restrained minimization once again
+  - process repeated until all violations are resolved.
+- Note: In the CASP14 assessment only one iteration was used
+- Full energy minimization and hydrogen placement was performed using OpenMM simulation package
+  - tolerance of 2.39 kcal/mol and unlimited number of steps (OpenMM default values)
+    
 ** Loss Functions
 *** Loss Functions  cite:jumperHighlyAccurateProtein2021
 #+ATTR_LATEX: width=\textwidth
@@ -499,11 +510,17 @@ cite:jumperHighlyAccurateProtein2021
      * can also be used to estimate GDT, FAPE, RMSD (using $e_{ij}$) matrix (not done)
      * used for confident domain packing visualizations
   
-*** [.] Distogram prediction  cite:jumperHighlyAccurateProtein2021 
+*** Distogram prediction  cite:jumperHighlyAccurateProtein2021 
 :PROPERTIES:
 :ID:       5327dc2a-5ab4-4d11-a7ba-49c64e970d01
 :END:
--  (eq. 41)
+- linear project pair representations to bins, sum directed edges, ie. $z_{ij} + z_{ji}$
+- 64 bins ($2 \angstrom - 22 \angstrom$)
+- prediction targets: $y^b_{ij}$ one-hot encoding (bins)
+  - from ground-truth $C_\beta$ atoms from all residues (except glycine, use $C_\alpha$)
+
+#+ATTR_LATEX :scale 0.4 :caption \caption{Cross entropy distogram loss averaged overall pairs (eq. 41)} 
+[[./imgs/distogram_loss.png]]
 *** [.] Masked MSA prediction  cite:jumperHighlyAccurateProtein2021 
 *** [.] "Experimentally resolved" prediction (fine tuning) cite:jumperHighlyAccurateProtein2021 
 *** [.] Structural violations (fine tuning)  cite:jumperHighlyAccurateProtein2021 
